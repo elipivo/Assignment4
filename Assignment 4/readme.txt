@@ -7,3 +7,5 @@ Project:
 	Assignment 4, Memory Management
 	
 Notes:
+
+	First Week.
