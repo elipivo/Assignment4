@@ -45,12 +45,53 @@ public final class GenerateRequests {
     public static void main(String[] args) throws IOException {
         
         FileWriter outputFile = new FileWriter("testInput.txt");
+        final int numRequests = 80000;
         
+        
+        //by design portion
+        outputFile.write("100000\n");
+        
+        final int memSize = 100000;
+        for (int i = 0; i < memSize; i++) {
+            outputFile.write("A 1\n");
+        }
+        
+        outputFile.write("A 1\n");
+        outputFile.write("D 100000\n");
+        outputFile.write("A 1");
+        outputFile.write("D 99999\n");
+        outputFile.write("D 100002\n");
+        outputFile.write("D 99986\nD 99987\nD 99988\n"
+                + "D 99989\nD 99990");
+        outputFile.write("D 99992\nD 99993\nD 99994\n"
+                + "D 99995\nD 99996\nD 99997");
+        outputFile.write("A 5\n");
+        outputFile.write("A 6\n");
+        
+        final int start1 = 99952;
+        final int end1 = 99973;
+        for (int i = start1; i < end1; i++) {
+            outputFile.write("D " + i + "\n");
+        }
+        final int start2 = 99974;
+        final int end2 = 99984;
+        for (int i = start2; i < end2; i++) {
+            outputFile.write("D " + i + "\n");
+        }
+        outputFile.write("A 10\n");
+        outputFile.write("A 20\n");
+        
+        final int allocsDone = 100007;
+        for (int i = 0; i < allocsDone; i++) {
+            outputFile.write("D " + i + "\n");
+        }
+        
+        //random portion
         int numDeallocs = 0;
         int numAllocs = 0;
         int totalAllocSize = 0;
         
-        final int numRequests = 100000;
+       
         for (int i = 0; i < numRequests; i++) {
             //select deallocation or allocation
             
@@ -71,8 +112,11 @@ public final class GenerateRequests {
             } else {
                 //make deallocation
                 
+                
+                
                 //get random alloc num, but ensure its within a valid range
-                int allocNum = (int) (Math.random() * (numAllocs - 1)) + 1;
+                int allocNum = (int) (Math.random() 
+                        * (numAllocs - 1)) + 1 + allocsDone;
                 
                 request += "D " + allocNum;
                 
