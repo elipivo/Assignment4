@@ -4,7 +4,7 @@
  * CS 600.226 Data Structures Fall 2015
  * Assignemnt 4
  * Eli Pivo - epivo1
- * Raphael Tenazas - rtenaza1
+ * Raphael Norman-Tenazas - rtenaza1
  * William Watson - wwatso13
  */
 public class Block {
