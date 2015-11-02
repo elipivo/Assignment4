@@ -1,9 +1,10 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import java.util.Collections;
 import java.util.Iterator;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,14 +18,14 @@ import org.junit.Test;
 public class AVLtreeTest {
     
     AVLtree<Integer> tree;
-    SortedSet<Integer> test;
+    List<Integer> test;
     Iterator<Integer> testIter;
     Iterable<Integer> treeIter;
     
     @Before
     public void setUp() {
         tree = new AVLtree<Integer>();
-        test = new TreeSet<Integer>();
+        test = new LinkedList<Integer>();
     }
     
     @Test
@@ -33,8 +34,9 @@ public class AVLtreeTest {
         /*
          *  50
          */
-        tree.add(50);
+        tree.add(50); 
         test.add(50);
+        Collections.sort(test);
         treeIter = tree.inOrder();
         testIter = test.iterator();
         for(Integer i : treeIter) { //test order is correct
@@ -50,6 +52,7 @@ public class AVLtreeTest {
          */
         tree.add(40);
         test.add(40);
+        Collections.sort(test);
         treeIter = tree.inOrder();
         testIter = test.iterator();
         for(Integer i : treeIter) { //test order is correct
@@ -65,6 +68,7 @@ public class AVLtreeTest {
          */
         tree.add(30);
         test.add(30);
+        Collections.sort(test);
         treeIter = tree.inOrder();
         testIter = test.iterator();
         for(Integer i : treeIter) { //test order is correct
@@ -82,6 +86,7 @@ public class AVLtreeTest {
          */
         tree.add(35);
         test.add(35);
+        Collections.sort(test);
         treeIter = tree.inOrder();
         testIter = test.iterator();
         for(Integer i : treeIter) { //test order is correct
@@ -99,6 +104,7 @@ public class AVLtreeTest {
          */
         tree.add(37);
         test.add(37);
+        Collections.sort(test);
         treeIter = tree.inOrder();
         testIter = test.iterator();
         for(Integer i : treeIter) { //test order is correct
@@ -116,6 +122,7 @@ public class AVLtreeTest {
          */
         tree.add(20);
         test.add(20);
+        Collections.sort(test);
         treeIter = tree.inOrder();
         testIter = test.iterator();
         for(Integer i : treeIter) { //test order is correct
@@ -135,6 +142,7 @@ public class AVLtreeTest {
          */
         tree.add(60);
         test.add(60);
+        Collections.sort(test);
         treeIter = tree.inOrder();
         testIter = test.iterator();
         for(Integer i : treeIter) { //test order is correct
@@ -154,6 +162,7 @@ public class AVLtreeTest {
          */
         tree.add(45);
         test.add(45);
+        Collections.sort(test);
         treeIter = tree.inOrder();
         testIter = test.iterator();
         for(Integer i : treeIter) { //test order is correct
@@ -173,6 +182,7 @@ public class AVLtreeTest {
          */
         tree.add(70);
         test.add(70);
+        Collections.sort(test);
         treeIter = tree.inOrder();
         testIter = test.iterator();
         for(Integer i : treeIter) { //test order is correct
@@ -193,6 +203,7 @@ public class AVLtreeTest {
          */
         tree.add(35);
         test.add(35);
+        Collections.sort(test);
         treeIter = tree.inOrder();
         testIter = test.iterator();
         for(Integer i : treeIter) { //test order is correct
@@ -212,6 +223,7 @@ public class AVLtreeTest {
          */
         tree.add(38);
         test.add(38);
+        Collections.sort(test);
         treeIter = tree.inOrder();
         testIter = test.iterator();
         for(Integer i : treeIter) { //test order is correct
@@ -233,6 +245,7 @@ public class AVLtreeTest {
          */
         tree.add(39);
         test.add(39);
+        Collections.sort(test);
         treeIter = tree.inOrder();
         testIter = test.iterator();
         for(Integer i : treeIter) { //test order is correct
