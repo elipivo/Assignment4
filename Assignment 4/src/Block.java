@@ -1,13 +1,29 @@
-
+/**
+ * An individual block of memory.
+ * Block.java
+ * CS 600.226 Data Structures Fall 2015
+ * Assignemnt 4
+ * Eli Pivo - epivo1
+ * Raphael Tenazas - rtenaza1
+ * William Watson - wwatso13
+ */
 public class Block {
+	
 	/** The memory address. */
     private int memAddress;
     /** Size of the memory block. */
     private int size;
-    /** Is the block filled. */
+    /** Is the block filled. True if yes.*/
     private boolean filled;
     /** The allocation number for this block. */
     private int allocNum;
+    
+    /**
+     * Constructor Method. 
+     */
+    public Block() {
+    	//add shit here.
+    }
     
     /**
      * Gets the memory address of this block.
