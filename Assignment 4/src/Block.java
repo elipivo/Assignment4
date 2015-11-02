@@ -8,8 +8,8 @@
  * William Watson - wwatso13
  */
 public class Block {
-	
-	/** The memory address. */
+    
+    /** The memory address. */
     private int memAddress;
     /** Size of the memory block. */
     private int size;
@@ -22,7 +22,7 @@ public class Block {
      * Constructor Method. 
      */
     public Block() {
-    	//add shit here.
+        //add shit here.
     }
     
     /**
@@ -30,16 +30,16 @@ public class Block {
      * @return the memAddress
      */
     public int getMemAddress() {
-        return memAddress;
+        return this.memAddress;
     }
 
 
     /**
      * Sets the memory address of this block.
-     * @param memAddress the memAddress to set
+     * @param memAddressNum the memAddress to set
      */
-    public void setMemAddress(int memAddress) {
-        this.memAddress = memAddress;
+    public void setMemAddress(int memAddressNum) {
+        this.memAddress = memAddressNum;
     }
 
 
@@ -48,16 +48,16 @@ public class Block {
      * @return the size
      */
     public int getSize() {
-        return size;
+        return this.size;
     }
 
 
     /**
      * Sets the size of the block.
-     * @param size the size to set
+     * @param sizeNum the size to set
      */
-    public void setSize(int size) {
-        this.size = size;
+    public void setSize(int sizeNum) {
+        this.size = sizeNum;
     }
 
 
@@ -66,16 +66,16 @@ public class Block {
      * @return the filled
      */
     public boolean isFilled() {
-        return filled;
+        return this.filled;
     }
 
 
     /**
      * Sets whether or not this block is filled.
-     * @param filled the filled to set
+     * @param isFilled the filled to set
      */
-    public void setFilled(boolean filled) {
-        this.filled = filled;
+    public void setFilled(boolean isFilled) {
+        this.filled = isFilled;
     }
 
 
@@ -84,16 +84,16 @@ public class Block {
      * @return the allocNum
      */
     public int getAllocNum() {
-        return allocNum;
+        return this.allocNum;
     }
 
 
     /**
      * Sets the Allocation number.
-     * @param allocNum the allocNum to set
+     * @param allocNumber the allocNum to set
      */
-    public void setAllocNum(int allocNum) {
-        this.allocNum = allocNum;
+    public void setAllocNum(int allocNumber) {
+        this.allocNum = allocNumber;
     }
 
 
@@ -101,8 +101,10 @@ public class Block {
     
     /**
      * Compares to blocks by size.
+     * @param b Block b to be compared with this.
+     * @return difference in size.
      */
-    private int compareTo(Block b){
+    public int compareTo(Block b) {
         return this.size - b.getSize();
     }
 }
