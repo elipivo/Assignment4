@@ -318,6 +318,9 @@ public class AVLtree<T extends Comparable<? super T>> {
      * @return true if balanced, false if not
      */
     public boolean isBalanced(BNode curr) {
+        if (curr == null) {
+            return true;
+        }
         return this.isBalanced(curr.left) && this.isBalanced(curr.right)
                 && Math.abs(this.height(curr.left) 
                         - this.height(curr.right)) < 2;
