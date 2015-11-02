@@ -1,8 +1,7 @@
 import java.util.ArrayList;
 
 /**
- * An individual block of memory.
- * Block.java
+ * Interface Memory.java.
  * CS 600.226 Data Structures Fall 2015
  * Assignemnt 4
  * Eli Pivo - epivo1
