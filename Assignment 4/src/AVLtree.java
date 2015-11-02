@@ -1,3 +1,4 @@
+
 /**
  * 600.226, Fall 2015
  * Starter code for AVLtree implementation
@@ -7,13 +8,15 @@ import java.util.LinkedList;
 
 /**
  * AVL Tree - based on Weiss.
- * @param <T> the base type of data in a node
+ * 
+ * @param <T>
+ *            the base type of data in a node
  *
  */
 public class AVLtree<T extends Comparable<? super T>> {
 
     /**
-     * Inner node class.  Do not make this static because you want the T to be
+     * Inner node class. Do not make this static because you want the T to be
      * the same T as in the BST header.
      */
     public class BNode {
@@ -29,7 +32,9 @@ public class AVLtree<T extends Comparable<? super T>> {
 
         /**
          * Constructor for BNode.
-         * @param val to insert the given node.
+         * 
+         * @param val
+         *            to insert the given node.
          */
         public BNode(T val) {
             this.data = val;
@@ -38,6 +43,7 @@ public class AVLtree<T extends Comparable<? super T>> {
 
         /**
          * Returns whether node is a leaf or not.
+         * 
          * @return true is node is leaf, false if not
          */
         public boolean isLeaf() {
@@ -60,6 +66,7 @@ public class AVLtree<T extends Comparable<? super T>> {
 
     /**
      * Find out how many elements are in the Tree.
+     * 
      * @return the number
      */
     public int size() {
@@ -68,6 +75,7 @@ public class AVLtree<T extends Comparable<? super T>> {
 
     /**
      * See if the Tree is empty.
+     * 
      * @return true if empty, false otherwise
      */
     public boolean isEmpty() {
@@ -76,6 +84,7 @@ public class AVLtree<T extends Comparable<? super T>> {
 
     /**
      * Get the value of the root.
+     * 
      * @return value of the root
      */
     public T root() {
@@ -87,7 +96,9 @@ public class AVLtree<T extends Comparable<? super T>> {
 
     /**
      * Search for an item in the tree.
-     * @param val the item to search for
+     * 
+     * @param val
+     *            the item to search for
      * @return true if found, false otherwise
      */
     public boolean contains(T val) {
@@ -96,8 +107,11 @@ public class AVLtree<T extends Comparable<? super T>> {
 
     /**
      * Checks if a tree contains a certain value.
-     * @param val the value you're looking for
-     * @param curr the root of the tree you're searching
+     * 
+     * @param val
+     *            the value you're looking for
+     * @param curr
+     *            the root of the tree you're searching
      * @return the node that contains that value
      */
     public BNode contains(T val, BNode curr) {
@@ -115,15 +129,17 @@ public class AVLtree<T extends Comparable<? super T>> {
 
     /**
      * Add an item to the Tree.
-     * @param val the item to add
+     * 
+     * @param val
+     *            the item to add
      * @return true if added, false if val is null
      */
     public boolean add(T val) {
         if (val != null) {
             this.root = this.insert(val, this.root);
             this.size++;
-            //how you can check whether the root is balanced:
-            //System.out.println(Math.abs(balanceFactor(this.root)));
+            // how you can check whether the root is balanced:
+            // System.out.println(Math.abs(balanceFactor(this.root)));
             return true;
         }
         return false;
@@ -131,8 +147,11 @@ public class AVLtree<T extends Comparable<? super T>> {
 
     /**
      * Helper insert method.
-     * @param val the value to insert
-     * @param curr the root of the tree
+     * 
+     * @param val
+     *            the value to insert
+     * @param curr
+     *            the root of the tree
      * @return the node that is inserted
      */
     private BNode insert(T val, BNode curr) {
@@ -144,7 +163,7 @@ public class AVLtree<T extends Comparable<? super T>> {
             temp.left = this.insert(val, temp.left);
             temp = this.balance(temp);
 
-        } else {  // val >= temp
+        } else { // val >= temp
             temp.right = this.insert(val, temp.right);
             temp = this.balance(temp);
 
@@ -154,35 +173,65 @@ public class AVLtree<T extends Comparable<? super T>> {
 
     /**
      * Remove an item from the Tree.
-     * @param val the item to remove
+     * 
+     * @param val
+     *            the item to remove
      * @return true if removed, false if not found
      */
     public boolean remove(T val) {
         if (this.contains(val)) {
             this.root = this.delete(this.root, val);
             this.size--;
-            //how you can check whether the root was balanced:
-            //System.out.println(Math.abs(balanceFactor(this.root)))
+            // how you can check whether the root was balanced:
+            // System.out.println(Math.abs(balanceFactor(this.root)))
             return true;
         }
         return false;
     }
 
-
     /**
      * Helper delete method. - This does the real work - IMPLEMENT!
-     * @param value the value to delete
-     * @param curr the root of the subtree to look in
+     * 
+     * @param value
+     *            the value to delete
+     * @param curr
+     *            the root of the subtree to look in
      * @return the new subtree after rebalancing
      */
     private BNode delete(BNode curr, T value) {
-        return null;
+        BNode temp = curr;
+        if (curr.left.data.compareTo(value) == 0) {
+            BNode temp2 = curr.left;
+            while (temp2.right != null) {
+                temp2 = temp2.right;
+            }
+            //Set temp2's parent to temp2's right child
+            //Temp2 shouldn't have left child.
+            curr.left = temp2;
+        } else if (curr.right.data.compareTo(value) == 0) {
+            BNode temp2 = curr.right;
+            while (temp2.left != null) {
+                temp2 = temp2.left;
+            }
+            //Set temp2's parent to temp2's right child
+            //Temp2 shouldn't have left child.
+            curr.left = temp2;
+        } else if (value.compareTo(temp.data) < 0) {
+            temp.left = this.insert(value, temp.left);
+            temp = this.balance(temp);
+
+        } else { // val >= temp
+            temp.right = this.insert(value, temp.right);
+            temp = this.balance(temp);
+        }
+        return temp;
     }
 
-
     /**
-     * Performs balancing of the nodes if necessary.  IMPLEMENT!
-     * @param curr the root of the subtree to balance
+     * Performs balancing of the nodes if necessary. IMPLEMENT!
+     * 
+     * @param curr
+     *            the root of the subtree to balance
      * @return the root node of the newly balanced subtree
      */
     private BNode balance(BNode curr) {
@@ -192,7 +241,9 @@ public class AVLtree<T extends Comparable<? super T>> {
 
     /**
      * Checks balance of nodes.
-     * @param b node to check balance at
+     * 
+     * @param b
+     *            node to check balance at
      * @return integer that is balance factor
      */
     private int balanceFactor(BNode b) {
@@ -209,7 +260,9 @@ public class AVLtree<T extends Comparable<? super T>> {
 
     /**
      * Search from curr (as root of subtree) and find minimum value.
-     * @param curr the root of the tree
+     * 
+     * @param curr
+     *            the root of the tree
      * @return the min
      */
     private BNode findMin(BNode curr) {
@@ -225,7 +278,9 @@ public class AVLtree<T extends Comparable<? super T>> {
 
     /**
      * Return the height of node t, or -1, if null.
-     * @param t the node to find the height of
+     * 
+     * @param t
+     *            the node to find the height of
      * @return int height to be returned
      */
     private int height(BNode t) {
@@ -237,19 +292,23 @@ public class AVLtree<T extends Comparable<? super T>> {
 
     /**
      * Check whether tree is balanced.
-     * @param curr the root of the tree
+     * 
+     * @param curr
+     *            the root of the tree
      * @return true if balanced, false if not
      */
     public boolean isBalanced(BNode curr) {
         return this.isBalanced(curr.left) && this.isBalanced(curr.right)
-                && Math.abs(this.height(curr.left) - this.height(curr.right))
-                < 2;
+                && Math.abs(this.height(curr.left) - this.height(curr.right)) < 2;
     }
 
     /**
      * Return maximum of lhs and rhs.
-     * @param lhs height of lhs
-     * @param rhs height of rhs
+     * 
+     * @param lhs
+     *            height of lhs
+     * @param rhs
+     *            height of rhs
      * @return the int that's larger
      */
     private static int max(int lhs, int rhs) {
@@ -260,9 +319,11 @@ public class AVLtree<T extends Comparable<? super T>> {
     }
 
     /**
-     * Rotate binary tree node with left child.
-     * Update heights, then return new root.
-     * @param k2 node to rotate
+     * Rotate binary tree node with left child. Update heights, then return new
+     * root.
+     * 
+     * @param k2
+     *            node to rotate
      * @return updated node
      */
     private BNode rotateWithLeftChild(BNode k2) {
@@ -273,17 +334,18 @@ public class AVLtree<T extends Comparable<? super T>> {
         if (k1 != null) {
             k2.left = k1.right;
             k1.right = k2;
-            k2.height = this.max(this.height(k2.left), 
-                this.height(k2.right)) + 1;
+            k2.height = this.max(this.height(k2.left), this.height(k2.right)) + 1;
             k1.height = this.max(this.height(k1.left), k2.height) + 1;
         }
         return k1;
     }
 
     /**
-     * Rotate binary tree node with right child.
-     * Update heights, then return new root.
-     * @param k1 node to rotate
+     * Rotate binary tree node with right child. Update heights, then return new
+     * root.
+     * 
+     * @param k1
+     *            node to rotate
      * @return updated node
      */
     private BNode rotateWithRightChild(BNode k1) {
@@ -301,10 +363,11 @@ public class AVLtree<T extends Comparable<? super T>> {
     }
 
     /**
-     * Double rotate binary tree node: first left child
-     * with its right child; then node k3 with new left child.
-     * Update heights, then return new root.
-     * @param k3 node to rotate
+     * Double rotate binary tree node: first left child with its right child;
+     * then node k3 with new left child. Update heights, then return new root.
+     * 
+     * @param k3
+     *            node to rotate
      * @return update node
      */
     private BNode doubleWithLeftChild(BNode k3) {
@@ -316,10 +379,11 @@ public class AVLtree<T extends Comparable<? super T>> {
     }
 
     /**
-     * Double rotate binary tree node: first right child
-     * with its left child; then node k1 with new right child.
-     * Update heights, then return new root.
-     * @param k1 node to rotate
+     * Double rotate binary tree node: first right child with its left child;
+     * then node k1 with new right child. Update heights, then return new root.
+     * 
+     * @param k1
+     *            node to rotate
      * @return updated node
      */
     private BNode doubleWithRightChild(BNode k1) {
@@ -332,6 +396,7 @@ public class AVLtree<T extends Comparable<? super T>> {
 
     /**
      * String representation of the Tree with elements in order.
+     * 
      * @return a string containing the Tree contents in the format "[1, 5, 6]".
      */
     public String toString() {
@@ -340,6 +405,7 @@ public class AVLtree<T extends Comparable<? super T>> {
 
     /**
      * Inorder traversal.
+     * 
      * @return a Collection of the Tree elements in order
      */
     public Iterable<T> inOrder() {
@@ -348,6 +414,7 @@ public class AVLtree<T extends Comparable<? super T>> {
 
     /**
      * Preorder traversal.
+     * 
      * @return a Collection of the Tree elements in preorder
      */
     public Iterable<T> preOrder() {
@@ -356,6 +423,7 @@ public class AVLtree<T extends Comparable<? super T>> {
 
     /**
      * Postorder traversal.
+     * 
      * @return a Collection of the Tree elements in postorder
      */
     public Iterable<T> postOrder() {
@@ -364,7 +432,9 @@ public class AVLtree<T extends Comparable<? super T>> {
 
     /**
      * Generates an in-order list of items.
-     * @param curr the root of the tree
+     * 
+     * @param curr
+     *            the root of the tree
      * @return collection of items in order
      */
     private Collection<T> inOrder(BNode curr) {
@@ -380,7 +450,9 @@ public class AVLtree<T extends Comparable<? super T>> {
 
     /**
      * Generates a pre-order list of items.
-     * @param curr the root of the tree
+     * 
+     * @param curr
+     *            the root of the tree
      * @return collection of items in preorder
      */
     private Collection<T> preOrder(BNode curr) {
@@ -396,7 +468,9 @@ public class AVLtree<T extends Comparable<? super T>> {
 
     /**
      * Generates a post-order list of items.
-     * @param curr the root of the tree
+     * 
+     * @param curr
+     *            the root of the tree
      * @return collection of items in postorder
      */
     private Collection<T> postOrder(BNode curr) {
