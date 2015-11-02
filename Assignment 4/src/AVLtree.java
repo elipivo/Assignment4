@@ -93,7 +93,7 @@ public class AVLtree<T extends Comparable<? super T>> {
         }
         return this.root.data;
     }
-
+    
     /**
      * Search for an item in the tree.
      * 
@@ -206,16 +206,18 @@ public class AVLtree<T extends Comparable<? super T>> {
                 temp2 = temp2.right;
             }
             //Set temp2's parent to temp2's right child
+            temp2.left = temp2.left.right;
             //Temp2 shouldn't have left child.
-            curr.left = temp2;
+            curr.left = temp2.left;
         } else if (curr.right.data.compareTo(value) == 0) {
             BNode temp2 = curr.right;
-            while (temp2.left != null) {
+            while (temp2.left.left != null) {
                 temp2 = temp2.left;
             }
             //Set temp2's parent to temp2's right child
+            temp2.left = temp2.left.right;
             //Temp2 shouldn't have left child.
-            curr.left = temp2;
+            curr.left = temp2.left;
         } else if (value.compareTo(temp.data) < 0) {
             temp.left = this.insert(value, temp.left);
             temp = this.balance(temp);
@@ -235,7 +237,11 @@ public class AVLtree<T extends Comparable<? super T>> {
      * @return the root node of the newly balanced subtree
      */
     private BNode balance(BNode curr) {
-
+        if(this.balanceFactor(curr) > 1){
+            if(this.balanceFactor(curr.left) >= 0){
+                
+            }
+        }
         return curr;
     }
 
@@ -301,7 +307,13 @@ public class AVLtree<T extends Comparable<? super T>> {
         return this.isBalanced(curr.left) && this.isBalanced(curr.right)
                 && Math.abs(this.height(curr.left) - this.height(curr.right)) < 2;
     }
-
+    /**
+     * Check whether THIS tree is balanced.
+     * @return true if balanced, false if not
+     */
+    public boolean isBalanced() {
+        return this.isBalanced(this.root);
+    }
     /**
      * Return maximum of lhs and rhs.
      * 
