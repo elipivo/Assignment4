@@ -93,7 +93,7 @@ public class AVLtree<T extends Comparable<? super T>> {
         }
         return this.root.data;
     }
-    
+
     /**
      * Search for an item in the tree.
      * 
@@ -205,30 +205,33 @@ public class AVLtree<T extends Comparable<? super T>> {
             while (temp2.right != null) {
                 temp2 = temp2.right;
             }
-            //Set temp2's parent to temp2's right child
+            // Set temp2's parent to temp2's right child
             temp2.left = temp2.left.right;
-            //Temp2 shouldn't have left child.
+            // Temp2 shouldn't have left child.
             curr.left = temp2.left;
+            temp = this.balance(temp);
         } else if (curr.right.data.compareTo(value) == 0) {
             BNode temp2 = curr.right;
             while (temp2.left.left != null) {
                 temp2 = temp2.left;
             }
-            //Set temp2's parent to temp2's right child
+            // Set temp2's parent to temp2's right child
             temp2.left = temp2.left.right;
-            //Temp2 shouldn't have left child.
+            // Temp2 shouldn't have left child.
             curr.left = temp2.left;
+            temp = this.balance(temp);
         } else if (value.compareTo(temp.data) < 0) {
-            temp.left = this.insert(value, temp.left);
+            temp.left = this.delete(temp.left, value);
             temp = this.balance(temp);
 
         } else { // val >= temp
-            temp.right = this.insert(value, temp.right);
+            temp.right = this.delete(temp.right, value);
             temp = this.balance(temp);
         }
         return temp;
     }
-
+   
+    
     /**
      * Performs balancing of the nodes if necessary. IMPLEMENT!
      * 
@@ -237,9 +240,20 @@ public class AVLtree<T extends Comparable<? super T>> {
      * @return the root node of the newly balanced subtree
      */
     private BNode balance(BNode curr) {
-        if(this.balanceFactor(curr) > 1){
-            if(this.balanceFactor(curr.left) >= 0){
-                
+        if (this.balanceFactor(curr) > 1) {
+            if (this.balanceFactor(curr.left) >= 0) {
+                curr = this.rotateWithLeftChild(curr);
+            }
+            if (this.balanceFactor(curr.left) < -1) {
+                curr = this.doubleWithLeftChild(curr);
+            }
+        }
+        if (this.balanceFactor(curr) < -1) {
+            if (this.balanceFactor(curr.right) <= 0) {
+                curr = this.rotateWithRightChild(curr);
+            }
+            if (this.balanceFactor(curr.left) > 1) {
+                curr = this.doubleWithRightChild(curr);
             }
         }
         return curr;
@@ -305,15 +319,19 @@ public class AVLtree<T extends Comparable<? super T>> {
      */
     public boolean isBalanced(BNode curr) {
         return this.isBalanced(curr.left) && this.isBalanced(curr.right)
-                && Math.abs(this.height(curr.left) - this.height(curr.right)) < 2;
+                && Math.abs(this.height(curr.left) 
+                        - this.height(curr.right)) < 2;
     }
+
     /**
      * Check whether THIS tree is balanced.
+     * 
      * @return true if balanced, false if not
      */
     public boolean isBalanced() {
         return this.isBalanced(this.root);
     }
+
     /**
      * Return maximum of lhs and rhs.
      * 
@@ -346,7 +364,8 @@ public class AVLtree<T extends Comparable<? super T>> {
         if (k1 != null) {
             k2.left = k1.right;
             k1.right = k2;
-            k2.height = this.max(this.height(k2.left), this.height(k2.right)) + 1;
+            k2.height = this.max(this.height(k2.left), 
+                    this.height(k2.right)) + 1;
             k1.height = this.max(this.height(k1.left), k2.height) + 1;
         }
         return k1;
