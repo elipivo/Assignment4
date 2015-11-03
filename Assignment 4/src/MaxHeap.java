@@ -12,12 +12,35 @@
  */
 public class MaxHeap<T> {
     
+	TNode head;
+	int size;
     
     /**
      * Default Constructor.
      */
     public MaxHeap() {
         
+    }
+    
+    
+    public boolean add(T val) {
+    	
+    }
+    
+    public boolean contains(T val) {
+    	
+    }
+    
+    public boolean isEmpty() {
+    	
+    }
+    
+    public boolean remove(T val) {
+    	
+    }
+    
+    public T root() {
+    	
     }
     
     
