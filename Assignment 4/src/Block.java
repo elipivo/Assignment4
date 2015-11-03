@@ -19,10 +19,26 @@ public class Block {
     private int allocNum;
     
     /**
-     * Constructor Method. 
+     * Default Constructor Method. 
      */
     public Block() {
-        //add shit here.
+        this.memAddress = -1;
+        this.size = -1;
+        this.filled = false;
+        this.allocNum = -1;
+    }
+    
+    /**
+     * Constructor for Memaddress, Size, allocNum.
+     * @param allocNumTmp allocation number.
+     * @param address address of memory.
+     * @param sizeTmp size of block wanted.
+     */
+    public Block(int allocNumTmp, int address, int sizeTmp) {
+    	this.memAddress = address;
+    	this.size = sizeTmp;
+    	this.filled = false;
+    	this.allocNum = allocNumTmp;
     }
     
     /**

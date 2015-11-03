@@ -22,6 +22,18 @@ public class Metric {
     private int sizeReg;
     
     /**
+     * Default Constructor.
+     */
+    public Metric() {
+    	this.alloc = false;
+    	this.id = -1;
+    	this.defrag = false;
+    	this.success = false;
+    	this.address = -1;
+    	this.sizeReg = -1;
+    }
+    
+    /**
      * Getter for Alloc.
      * @return true is alloc.
      */
