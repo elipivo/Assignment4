@@ -1,5 +1,6 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -43,7 +44,7 @@ public class AVLtreeTest {
             assertEquals(i, testIter.next());
         }
         assertFalse(testIter.hasNext());
-        tree.isBalanced(); //test the tree is balanced
+        assertTrue(tree.isBalanced()); //test the tree is balanced
         
         /*
          *    50
@@ -59,7 +60,7 @@ public class AVLtreeTest {
             assertEquals(i, testIter.next());
         }
         assertFalse(testIter.hasNext());
-        tree.isBalanced(); //test the tree is balanced
+        assertTrue(tree.isBalanced()); //test the tree is balanced
         
         /* Forces Left-Left case (with no subtrees dealt w/)
          *    40
@@ -75,7 +76,7 @@ public class AVLtreeTest {
             assertEquals(i, testIter.next());
         }
         assertFalse(testIter.hasNext());
-        tree.isBalanced(); //test the tree is balanced
+        assertTrue(tree.isBalanced()); //test the tree is balanced
         
         /*
          *    40
@@ -93,7 +94,7 @@ public class AVLtreeTest {
             assertEquals(i, testIter.next());
         }
         assertFalse(testIter.hasNext());
-        tree.isBalanced(); //test the tree is balanced
+        assertTrue(tree.isBalanced()); //test the tree is balanced
         
         /* Forces Right-Right case (with no subtrees dealt w/)
          *     40
@@ -111,7 +112,7 @@ public class AVLtreeTest {
             assertEquals(i, testIter.next());
         }
         assertFalse(testIter.hasNext());
-        tree.isBalanced(); //test the tree is balanced
+        assertTrue(tree.isBalanced()); //test the tree is balanced
         
         /* Forces Left-Left case (w/ subtrees dealt w/)
          *      35
@@ -129,7 +130,7 @@ public class AVLtreeTest {
             assertEquals(i, testIter.next());
         }
         assertFalse(testIter.hasNext());
-        tree.isBalanced(); //test the tree is balanced
+        assertTrue(tree.isBalanced()); //test the tree is balanced
         
         /*
          *      35
@@ -149,7 +150,7 @@ public class AVLtreeTest {
             assertEquals(i, testIter.next());
         }
         assertFalse(testIter.hasNext());
-        tree.isBalanced(); //test the tree is balanced
+        assertTrue(tree.isBalanced()); //test the tree is balanced
         
         /*
          *      35
@@ -169,7 +170,7 @@ public class AVLtreeTest {
             assertEquals(i, testIter.next());
         }
         assertFalse(testIter.hasNext());
-        tree.isBalanced(); //test the tree is balanced
+        assertTrue(tree.isBalanced()); //test the tree is balanced
         
         /* Forces Right-Right case w/ subtree dealt w/
          *      35
@@ -189,7 +190,7 @@ public class AVLtreeTest {
             assertEquals(i, testIter.next());
         }
         assertFalse(testIter.hasNext());
-        tree.isBalanced(); //test the tree is balanced
+        assertTrue(tree.isBalanced()); //test the tree is balanced
         
         /* Forces Right-Left case w/ subtree dealt w/
          *        40
@@ -210,7 +211,7 @@ public class AVLtreeTest {
             assertEquals(i, testIter.next());
         }
         assertFalse(testIter.hasNext());
-        tree.isBalanced(); //test the tree is balanced
+        assertTrue(tree.isBalanced()); //test the tree is balanced
         
         /* 
          *        40
@@ -230,7 +231,7 @@ public class AVLtreeTest {
             assertEquals(i, testIter.next());
         }
         assertFalse(testIter.hasNext());
-        tree.isBalanced(); //test the tree is balanced
+        assertTrue(tree.isBalanced()); //test the tree is balanced
         
         /* Forces Left-Right Case w/ Subtree Handling
          *        37
@@ -252,8 +253,113 @@ public class AVLtreeTest {
             assertEquals(i, testIter.next());
         }
         assertFalse(testIter.hasNext());
-        tree.isBalanced(); //test the tree is balanced
+        assertTrue(tree.isBalanced()); //test the tree is balanced
         
     }
+    
+    @Test
+    public void testRemove() {
+        
+        //remove on null
+        assertFalse(tree.remove(3));
+        
+        /* Build Tree
+         *            8
+         *      /           \
+         *     4            12
+         *   /   \        /    \
+         *  2     5      10     14
+         * / \   / \    /  \   /  \
+         *1   3 6   7  9   11 13   15                
+         */
+        for (int i = 1; i <= 15; i++) {
+           tree.add(i); 
+           test.add(i);
+        }
+        
+        //try to remove something that doesn't exit
+        assertFalse(tree.remove(16));
+        
+        //remove each node from 15 to 1
+        for (int i = 15; i > 0; i--) {
+            assertTrue(tree.remove(i));
+            test.remove(i);
+            Collections.sort(test);
+            treeIter = tree.inOrder();
+            testIter = test.iterator();
+            for(Integer k : treeIter) { //test order is correct
+                assertEquals(k, testIter.next());
+            }
+            assertFalse(this.testIter.hasNext());
+            assertTrue(this.tree.isBalanced()); //test the tree is balanced
+        }
+        
+        /* Build Tree
+         *            8
+         *      /           \
+         *     4            12
+         *   /   \        /    \
+         *  2     5      10     14
+         * / \   / \    /  \   /  \
+         *1   3 6   7  9   11 13   15                
+         */
+        for (int i = 1; i <= 15; i++) {
+            tree.add(i); 
+            test.add(i);
+        }
+
+        //remove each node from 1 to 15  
+        for (int i = 1; i <= 15; i++) {
+            assertTrue(tree.remove(i));
+            test.remove(i);
+            Collections.sort(test);
+            treeIter = tree.inOrder();
+            testIter = test.iterator();
+            for(Integer k : treeIter) { //test order is correct
+                assertEquals(k, testIter.next());
+            }
+            assertFalse(this.testIter.hasNext());
+            assertTrue(this.tree.isBalanced()); //test the tree is balanced
+        }
+        
+        //remove each node from 1 to 15 individually  
+        for (int i = 1; i <= 15; i++) {
+            /* Build Tree
+             *            8
+             *      /           \
+             *     4            12
+             *   /   \        /    \
+             *  2     5      10     14
+             * / \   / \    /  \   /  \
+             *1   3 6   7  9   11 13   15                
+             */
+            
+            for (int n = 1; n <= 15; n++) {
+                tree.add(n); 
+                test.add(n);
+            }
+            
+            assertTrue(tree.remove(i));
+            test.remove(i);
+            Collections.sort(test);
+            treeIter = tree.inOrder();
+            testIter = test.iterator();
+            for(Integer k : treeIter) { //test order is correct
+                assertEquals(k, testIter.next());
+            }
+            assertFalse(this.testIter.hasNext());
+            assertTrue(this.tree.isBalanced()); //test the tree is balanced
+            
+            //then clear tree
+            for (int n = 1; n <= 15; i++) {
+                tree.remove(i);
+                test.remove(i);
+            }
+            
+        }
+        
+    }
+    
+
 
 }
