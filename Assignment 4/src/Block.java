@@ -111,9 +111,6 @@ public class Block {
     public void setAllocNum(int allocNumber) {
         this.allocNum = allocNumber;
     }
-
-
-    
     
     /**
      * Compares to blocks by size.
@@ -122,5 +119,15 @@ public class Block {
      */
     public int compareTo(Block b) {
         return this.size - b.getSize();
+    }
+    
+    /**
+     * To String method for Block.java.
+     * @return string representation of a block.
+     */
+    public String toString() {
+    	return "Block: " + this.memAddress + " Size: " 
+    			+ this.size + " Filled: " + this.filled 
+    				+ " Allocation#: " + this.allocNum;
     }
 }
