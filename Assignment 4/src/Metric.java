@@ -30,7 +30,7 @@ public class Metric {
     	this.defrag = false;
     	this.success = false;
     	this.address = -1;
-    	this.sizeReg = -1;
+    	this.sizeReq = -1;
     }
     
     /**
@@ -106,15 +106,15 @@ public class Metric {
      * Size request.
      * @return the sizeReg
      */
-    public int getSizeReg() {
-        return this.sizeReg;
+    public int getSizeReq() {
+        return this.sizeReq;
     }
     /**
      * Set size req.
      * @param sizeRegNum the sizeReg to set
      */
-    public void setSizeReg(int sizeRegNum) {
-        this.sizeReg = sizeRegNum;
+    public void setSizeReq(int sizeReqNum) {
+        this.sizeReq = sizeReqNum;
     }
     
     
