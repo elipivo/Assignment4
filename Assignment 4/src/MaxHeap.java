@@ -7,19 +7,26 @@
  * Eli Pivo - epivo1
  * Raphael Norman-Tenazas - rtenaza1
  * William Watson - wwatso13
- * 
+ */
+
+import java.util.ArrayList;
+ 
+/** 
  * @param <T> Generic Type T.
  */
 public class MaxHeap<T> {
     
-	TNode head;
-	int size;
+	/** Head of Heap. */
+	private TNode head;
+	/** Size of Heap. */
+	private int size;
     
     /**
      * Default Constructor.
      */
     public MaxHeap() {
-        
+        this.head = null;
+        this.size = 0;
     }
     
     
@@ -31,23 +38,75 @@ public class MaxHeap<T> {
     	
     }
     
-    public boolean isEmpty() {
-    	
-    }
-    
     public boolean remove(T val) {
     	
     }
-    
-    public T root() {
-    	
+
+    /**
+     * Method to see if Heap is empty or not.
+     * @return true if empty, false otherwise.
+     */
+    public boolean isEmpty() {
+    	return this.size == 0;
     }
     
+    /**
+     * Gets the data in the root of the tree.
+     * @return value of data in root.
+     */
+    public T root() {
+    	if (this.head == null) {
+    		return null;
+    	}
+    	return head.data;
+    }
     
+    /**
+     * Getter for heap size.
+     * @return the size of the heap.
+     */
+    public int size() {
+    	return this.size;
+    }
     
+    /**
+     * ToString method for the heap.
+     * @return a string representation of the heap.
+     */
+    public String toString() {
+    	return this.inOrder().toString();
+    }
     
+    /**
+     * Makes an array list of elements in order traversal.
+     * @return Array list of all elements in heap.
+     */
+    private ArrayList<T> inOrder() {
+    	ArrayList<T> tmp = new ArrayList<T>();
+    	
+    	if (this.head != null) {
+    		this.traverse(head, tmp);
+    	}
+    	
+    	return tmp;
+    }
     
-    
+    /**
+     * Traverses the tree.
+     * @param head 	node to traverse.
+     * @param tmp	list to add elements to.
+     */
+    private void traverse(TNode head, ArrayList<T> tmp) {
+    	if (head.left != null) {
+    		traverse(head.left, tmp);
+    	}
+    	
+    	tmp.add(head.data);
+    	
+    	if (head.right != null) {
+    		traverse(head.right, tmp);
+    	}
+    }
     
     /**
      * Inner Helper Node Class for Organizing Nodes.
