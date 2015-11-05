@@ -281,7 +281,7 @@ public class AVLtreeTest {
         assertFalse(tree.remove(16));
         
         //remove each node from 15 to 1
-        for (int i = 15; i > 0; i--) {
+        for (int i = 14; i > 0; i--) {
             assertTrue(tree.remove(i));
             test.remove(i);
             Collections.sort(test);
