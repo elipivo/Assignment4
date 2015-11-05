@@ -254,7 +254,7 @@ public class MaxHeapTest {
         assertEquals("[]", heap.toString());
         
         heap.clear();
-        
+        //end test
     }
     
     @Test
