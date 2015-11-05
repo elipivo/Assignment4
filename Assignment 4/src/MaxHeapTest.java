@@ -50,6 +50,36 @@ public class MaxHeapTest {
     }
     
     @Test
+    public void testConstructors() {
+        heap = new MaxHeap<Integer>();
+        //MaxHeap<Integer> heapList = null;
+        ArrayList<Integer> numbers = new ArrayList<Integer>();
+        
+        for (int i = 0; i < 10; i++) {
+            numbers.add(i);
+        }
+        
+        assertEquals("[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]", numbers.toString());
+        
+        MaxHeap<Integer> heapList = new MaxHeap<Integer>(numbers);
+        //add normally to heap.
+        for (int i = 0; i < numbers.size(); i++) {
+            heap.add(numbers.get(i));
+        }
+        
+        for (int i = 0; i < numbers.size(); i++) {
+            assertTrue(heap.contains(numbers.get(i)));
+            assertTrue(heapList.contains(i));
+        }
+        
+        //make sure normal add and list add are same.
+        assertEquals(heap.toString(), heapList.toString());
+        
+        heap.clear();
+        heapList.clear();
+    }
+    
+    @Test
     public void testEmpty() {
         //test empty edge cases as well.
         assertTrue(heap.isEmpty());
@@ -254,7 +284,7 @@ public class MaxHeapTest {
         assertEquals("[]", heap.toString());
         
         heap.clear();
-        //end test
+        
     }
     
     @Test

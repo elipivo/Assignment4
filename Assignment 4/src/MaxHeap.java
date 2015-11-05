@@ -34,9 +34,10 @@ public class MaxHeap<T extends Comparable<T>> {
      *            arrayList.
      */
     public MaxHeap(ArrayList<T> list) {
-    	for (int i = 0; i < list.size(); i++) {
-    		this.add(list.get(i));
-    	}
+        this.heap = new ArrayList<T>();
+        for (int i = 0; i < list.size(); i++) {
+            this.add(list.get(i));
+        }
     }
 
     /**
@@ -46,6 +47,7 @@ public class MaxHeap<T extends Comparable<T>> {
      *            value to be added to heap.
      */
     public void add(T val) {
+        
         if (this.heap.size() == 0) {
             this.heap.add(val);
             return;
