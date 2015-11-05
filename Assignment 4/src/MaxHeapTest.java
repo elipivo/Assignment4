@@ -10,14 +10,14 @@
 
 
 /** TESTS for 600.226 Fall 2015 Project 4 - MaxHeap implementation
- *  Test for Initiation and Constructors.
- *  Test for Adding
- *  Test for Contains
- *  Test for Dequeue (remove max)
- *  Test isEmpty
- *  Test Max
- *  Test size
- *  Test toString();
+ *  Test Explicitly for Initiation and Constructors.
+ *  Test Explicitly for Adding
+ *  Test Explicitly for Contains
+ *  Test Explicitly for Dequeue (remove max)
+ *  Test Explicitly isEmpty
+ *  Test Implicitly Max
+ *  Test Implicitly size
+ *  Test Implicitly toString()
  *  
  *  NEED: heapify
  */
@@ -31,6 +31,10 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
+
+import java.util.ArrayList;
+import java.util.Random;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -129,7 +133,7 @@ public class MaxHeapTest {
             assertEquals(heap.dequeue(), (Integer) i);
             assertEquals(heap.size(), --size);
             assertFalse(heap.contains(i));
-            //test these while heap not empty yet, will be emtpy at i = 0
+            //test these while heap not empty yet, will be empty at i = 1
             if (i != 0) {
                 assertEquals(heap.max(), (Integer) (i - 1));
                 assertFalse(heap.isEmpty());
@@ -145,26 +149,156 @@ public class MaxHeapTest {
     
     @Test
     public void testDequeue() {
+        //check dequeue if added in order.
+        int size = 0;
+        for (int i = 500; i > 0; i--) {
+            heap.add(i);
+            assertEquals(heap.size(), ++size);
+            assertTrue(heap.contains(i));
+            assertEquals(heap.max(), (Integer) 500);
+            assertFalse(heap.isEmpty());
+        }
+        for (int i = 500; i > 0; i--) {
+            assertEquals(heap.dequeue(), (Integer) i);
+            assertEquals(heap.size(), --size);
+            assertFalse(heap.contains(i));
+            //test these while heap not empty yet, will be emtpy at i = 0
+            if (i != 1) {
+                assertEquals(heap.max(), (Integer) (i - 1));
+                assertFalse(heap.isEmpty());
+            } else {
+                //i = 0, heap empty so...
+                assertNull(heap.max());
+                assertTrue(heap.isEmpty());
+            }
+        }
+        
+        //make sure not there.
+        for (int i = 500; i > 0; i--) {
+            assertFalse(heap.contains(i));
+            assertTrue(heap.isEmpty());
+            assertTrue(heap.size() == 0);
+        }
+        
+        //remove after percolating adding.
+        for (int i = 0; i < 500; i++) {
+            heap.add(i);
+            assertEquals(heap.size(), ++size);
+            assertTrue(heap.contains(i));
+            assertEquals(heap.max(), (Integer) i);
+            assertFalse(heap.isEmpty());
+        }
+        
+        //500 items in heap, 499 is max (b/c of for loop bounds)
+        assertTrue(heap.size() == 500);
+        assertTrue(heap.max() == 499);
+        
+        int max = heap.max();
+        for (int i = 499; i > -1; i--) {
+            assertEquals(heap.dequeue(), (Integer) i);
+            assertEquals(heap.size(), --size);
+            assertFalse(heap.contains(i));
+            //test these while heap not empty yet, will be emtpy at i = 0
+            if (i != 0) {
+                assertEquals(heap.max(), (Integer) (i - 1));
+                assertFalse(heap.isEmpty());
+            } else {
+                //i = 0, heap empty so...
+                assertNull(heap.max());
+                assertTrue(heap.isEmpty());
+            }
+        }
+        
+        heap.clear();
+        
+        //ArrayList<Integer> tmp = new ArrayList<Integer>();
+        //test duplicate add and remove.
+        int dup = 150;
+        int sizeTest = 0;
+        for (int i = 0; i < 200; i++) {
+            heap.add(dup);
+            sizeTest++;
+            assertTrue(heap.size() == sizeTest);
+            assertTrue(heap.contains(dup));
+            assertTrue(heap.max().equals(150));
+        }
+        
+        assertTrue(heap.size() == 200);
+        assertTrue(heap.max().equals(150));
+        //not empty string
+        assertTrue(!heap.toString().equals("[]"));
+        
+        //manually make string to test toString
+        String test = "[";
+        for (int i = 0; i < 200; i++) {
+            if (i == 199) {
+                test += "150]";
+            } else {
+                test += "150, ";
+            }
+        }
+        
+        assertEquals(test, heap.toString());
+        
+        //remove each dup
+        for (int i = 0; i < 200; i++) {
+            assertTrue(heap.max().equals(150));
+            assertTrue(heap.dequeue().equals(150));
+            assertTrue(heap.size() == --sizeTest);
+        }
+        
+        assertTrue(heap.isEmpty());
+        assertNull(heap.max());
+        assertFalse(heap.contains(150));
+        assertTrue(heap.size() == 0);
+        assertEquals("[]", heap.toString());
+        
+        heap.clear();
         
     }
     
     @Test
     public void testMaxAndSize() {
+        //add random values in.
+        //check size and max
+        //this will check both duplicates and random adding.
+        Random gen = new Random();
+        
+        assertNull(heap.max());
+        int size = 0;
+        int max = 0;
+        for (int i = 0; i < 5000; i++) {
+            int k = gen.nextInt(50);
+            heap.add(k);
+            size++;
+            //update max number so far
+            if (k > max) {
+                max = k;
+            }
+            assertTrue(heap.size() == size);
+            assertTrue(heap.max().equals(max));
+            assertTrue(heap.contains(k));
+            
+        }
+        
+        //clear it.
+        for (int i = 0; i < 5000; i++) {
+            heap.dequeue();
+        }
+        
+        for (int i = 0; i < 50; i++) {
+            assertFalse(heap.contains(i));
+        }
+        
+        assertNull(heap.dequeue());
+        assertNull(heap.max());
+        assertEquals("[]", heap.toString());
+        assertTrue(heap.isEmpty());
+        assertTrue(heap.size() == 0);
+        
+        //just make sure
+        heap.clear();
         
     }
-    
-    
-    @Test
-    public void testToString() {
-        
-    }
-    
-    
-    
-    
-    
-    
-    
-    
     
 }
