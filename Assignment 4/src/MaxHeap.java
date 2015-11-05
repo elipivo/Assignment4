@@ -32,7 +32,7 @@ public class MaxHeap<T> {
 
 	/**
 	 * Constructor for ArrayList input.
-	 * 
+	 * (Heapify).
 	 * @param list
 	 *            arrayList.
 	 */
