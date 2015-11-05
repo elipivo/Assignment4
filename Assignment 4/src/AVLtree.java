@@ -200,26 +200,31 @@ public class AVLtree<T extends Comparable<? super T>> {
      */
     private BNode delete(BNode curr, T value) {
         BNode temp = curr;
-        if (curr.left.data.compareTo(value) == 0) {
-            BNode temp2 = curr.left;
-            while (temp2.right != null) {
-                temp2 = temp2.right;
+        if (curr == null) {
+            return null;
+        }
+        if (curr.left != null && curr.left != null) {
+            if (curr.left.data.compareTo(value) == 0) {
+                BNode temp2 = curr.left;
+                while (temp2.right != null) {
+                    temp2 = temp2.right;
+                }
+                // Set temp2's parent to temp2's right child
+                temp2.left = temp2.left.right;
+                // Temp2 shouldn't have left child.
+                curr.left = temp2.left;
+                temp = this.balance(temp);
+            } else if (curr.right.data.compareTo(value) == 0) {
+                BNode temp2 = curr.right;
+                while (temp2.left.left != null) {
+                    temp2 = temp2.left;
+                }
+                // Set temp2's parent to temp2's right child
+                temp2.left = temp2.left.right;
+                // Temp2 shouldn't have left child.
+                curr.left = temp2.left;
+                temp = this.balance(temp);
             }
-            // Set temp2's parent to temp2's right child
-            temp2.left = temp2.left.right;
-            // Temp2 shouldn't have left child.
-            curr.left = temp2.left;
-            temp = this.balance(temp);
-        } else if (curr.right.data.compareTo(value) == 0) {
-            BNode temp2 = curr.right;
-            while (temp2.left.left != null) {
-                temp2 = temp2.left;
-            }
-            // Set temp2's parent to temp2's right child
-            temp2.left = temp2.left.right;
-            // Temp2 shouldn't have left child.
-            curr.left = temp2.left;
-            temp = this.balance(temp);
         } else if (value.compareTo(temp.data) < 0) {
             temp.left = this.delete(temp.left, value);
             temp = this.balance(temp);
@@ -230,8 +235,7 @@ public class AVLtree<T extends Comparable<? super T>> {
         }
         return temp;
     }
-   
-    
+
     /**
      * Performs balancing of the nodes if necessary. IMPLEMENT!
      * 
@@ -322,8 +326,7 @@ public class AVLtree<T extends Comparable<? super T>> {
             return true;
         }
         return this.isBalanced(curr.left) && this.isBalanced(curr.right)
-                && Math.abs(this.height(curr.left) 
-                        - this.height(curr.right)) < 2;
+                && Math.abs(this.height(curr.left) - this.height(curr.right)) < 2;
     }
 
     /**
@@ -367,8 +370,7 @@ public class AVLtree<T extends Comparable<? super T>> {
         if (k1 != null) {
             k2.left = k1.right;
             k1.right = k2;
-            k2.height = this.max(this.height(k2.left), 
-                    this.height(k2.right)) + 1;
+            k2.height = this.max(this.height(k2.left), this.height(k2.right)) + 1;
             k1.height = this.max(this.height(k1.left), k2.height) + 1;
         }
         return k1;
