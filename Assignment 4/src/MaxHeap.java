@@ -34,7 +34,9 @@ public class MaxHeap<T extends Comparable<T>> {
      *            arrayList.
      */
     public MaxHeap(ArrayList<T> list) {
-
+    	for (int i = 0; i < list.size(); i++) {
+    		this.add(list.get(i));
+    	}
     }
 
     /**
