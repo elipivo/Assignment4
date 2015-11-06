@@ -79,6 +79,8 @@ public class WorstFitMemory implements Memory {
 
     @Override
     public ArrayList<Block> bucketSort() {
+        final long startTime = System.currentTimeMillis();
+        
         ArrayList<Block> sortedMemory = new ArrayList<Block>();
         
         Block[] memoryAddress = new Block[this.memSize];
@@ -91,13 +93,79 @@ public class WorstFitMemory implements Memory {
             sortedMemory.add(memoryAddress[i]);
         }
         
+        final long endTime = System.currentTimeMillis();
+        this.totalSizeBucketsort += this.emptyMemory.size();
+        this.timeBucketsort += endTime - startTime;
+        
         return sortedMemory;
     }
 
     @Override
     public ArrayList<Block> quickSort() {
+        //avoids refrence to heap and thus sorting actual heap.
+        ArrayList<Block> tmp = new 
+                ArrayList<Block>(this.emptyMemory.toArrayList());
         
-        return null;
+        this.qsort(tmp, 0, tmp.size() - 1);
+
+        return tmp;
+    }
+    
+    /**
+     * Private helper method for quicksort.
+     * @param tmp ArrayList to sort
+     * @param lo lower bound
+     * @param hi upper bound
+     */
+    private void qsort(ArrayList<Block> tmp, int lo, int hi) {
+        if (hi <= lo) {
+            return;
+        }
+        int j = this.partition(tmp, lo, hi); //partition it
+        this.qsort(tmp, lo, j - 1); //sort left part
+        this.qsort(tmp, j + 1, hi); //sort right part
+    }
+    /**
+     * Partitions the array to sort.
+     * @param tmp arraylist to sort
+     * @param lo lower bound
+     * @param hi upper bound
+     * @return j
+     */
+    private int partition(ArrayList<Block> tmp, int lo, int hi) {
+        int i = lo;
+        int j = hi + 1;
+        Block v = tmp.get(lo);
+        while (true) {
+            while (tmp.get(++i).compareTo(v) < 0) {
+                if (i == hi) {
+                    break;
+                }
+            }
+            while (v.compareTo(tmp.get(--j)) < 0) {
+                if (j == lo) {
+                    break;
+                }
+            }
+            if (i >= j) {
+                break;
+            }
+            this.swap(tmp, i, j);   
+        }
+        this.swap(tmp, lo, j);
+        return j;
+    }
+    
+    /**
+     * Swaps the element at i with j in tmp.
+     * @param tmp array list
+     * @param i first index
+     * @param j second index
+     */
+    private void swap(ArrayList<Block> tmp, int i, int j) {
+        Block block = tmp.get(i);
+        tmp.set(i, tmp.get(j));
+        tmp.set(j, block);
     }
     
 }
