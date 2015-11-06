@@ -39,9 +39,12 @@ public class WorstFitMemory implements Memory {
     
     /**
      * Default Constructor.
+     * @param size size request by user.
      */
-    public WorstFitMemory() {
+    public WorstFitMemory(int size) {
         this.emptyMemory = new MaxHeap<Block>();
+        Block tmp = new Block(0, 0, size);
+        this.emptyMemory.add(tmp);
         this.filledMemory = new ArrayList<Block>();
         this.memSize = 0;
         this.metrics = new ArrayList<Metric>();
