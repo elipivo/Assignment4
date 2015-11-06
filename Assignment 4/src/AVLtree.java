@@ -204,6 +204,7 @@ public class AVLtree<T extends Comparable<? super T>> {
                 curr2 = curr2.right;
             }
             curr.left = curr2;
+            this.delete(curr2,curr2.data);
         }
         if (left.left != null && left.right == null) { // One left child
             curr.left = left.left;
@@ -230,6 +231,7 @@ public class AVLtree<T extends Comparable<? super T>> {
                 curr2 = curr2.right;
             }
             curr.left = curr2;
+            this.delete(curr2, curr2.data);
         }
         if (right.left != null && right.right == null) { // One left
                                                          // child

@@ -281,12 +281,15 @@ public class AVLtreeTest {
         assertFalse(tree.remove(16));
         
         //remove each node from 15 to 1
-        for (int i = 14; i > 0; i--) {
+        for (int i = 15; i > 0; i--) {
+            System.out.println(i);
             assertTrue(tree.remove(i));
-            test.remove(i);
+            
+            test.remove((Integer) i);
             Collections.sort(test);
             treeIter = tree.inOrder();
             testIter = test.iterator();
+            System.out.println(test.toString());
             for(Integer k : treeIter) { //test order is correct
                 assertEquals(k, testIter.next());
             }
