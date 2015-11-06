@@ -190,6 +190,59 @@ public class AVLtree<T extends Comparable<? super T>> {
     }
 
     /**
+     * Deletes from the left.
+     * 
+     * @param curr
+     *            Current node
+     */
+    private void deleteLeft(BNode curr) {
+        BNode left = curr.left; // To simplify typing, might inline
+        // later
+        if (left.left != null && left.right != null) { // Two children
+            BNode curr2 = left.left;
+            while (curr2.right != null) {
+                curr2 = curr2.right;
+            }
+            curr.left = curr2;
+        }
+        if (left.left != null && left.right == null) { // One left child
+            curr.left = left.left;
+        }
+        if (left.left == null && left.right != null) { // One right
+            // child
+            curr.left = left.right;
+        }
+    }
+
+    /**
+     * Deletes from the right.
+     * 
+     * @param curr
+     *            Current node
+     */
+    private void deleteRight(BNode curr) {
+
+        BNode right = curr.right; // To simplify typing, might inline
+                                  // later
+        if (right.left != null && right.right != null) { // Two children
+            BNode curr2 = right.left;
+            while (curr2.right != null) {
+                curr2 = curr2.right;
+            }
+            curr.left = curr2;
+        }
+        if (right.left != null && right.right == null) { // One left
+                                                         // child
+            curr.left = right.left;
+        }
+        if (right.left == null && right.right != null) { // One right
+                                                         // child
+            curr.left = right.right;
+        }
+
+    }
+
+    /**
      * Helper delete method. - This does the real work - IMPLEMENT!
      * 
      * @param value
@@ -203,37 +256,27 @@ public class AVLtree<T extends Comparable<? super T>> {
         if (curr == null) {
             return null;
         }
-        if (curr.left != null && curr.left != null) {
-            if (curr.left.data.compareTo(value) == 0) {
-                BNode temp2 = curr.left;
-                while (temp2.right != null) {
-                    temp2 = temp2.right;
-                }
-                // Set temp2's parent to temp2's right child
-                temp2.left = temp2.left.right;
-                // Temp2 shouldn't have left child.
-                curr.left = temp2.left;
-                temp = this.balance(temp);
-            } else if (curr.right.data.compareTo(value) == 0) {
-                BNode temp2 = curr.right;
-                while (temp2.left.left != null) {
-                    temp2 = temp2.left;
-                }
-                // Set temp2's parent to temp2's right child
-                temp2.left = temp2.left.right;
-                // Temp2 shouldn't have left child.
-                curr.left = temp2.left;
-                temp = this.balance(temp);
-            }
+
+        if (curr.left != null && curr.left.data.compareTo(value) == 0) {
+            this.deleteLeft(curr);
+        }
+
+        if (curr.right != null && curr.right.data.compareTo(value) == 0) {
+            this.deleteRight(curr);
+
         } else if (value.compareTo(temp.data) < 0) {
+
             temp.left = this.delete(temp.left, value);
             temp = this.balance(temp);
 
-        } else { // val >= temp
+        } else
+
+        { // val >= temp
             temp.right = this.delete(temp.right, value);
             temp = this.balance(temp);
         }
         return temp;
+
     }
 
     /**
