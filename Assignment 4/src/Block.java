@@ -3,7 +3,7 @@
  * 2015 Assignemnt 4 Eli Pivo - epivo1 Raphael Norman-Tenazas - rtenaza1 William
  * Watson - wwatso13
  */
-public class Block implements Comparable<Block>{
+public class Block implements Comparable<Block> {
 
     /** The memory address. */
     private int memAddress;
