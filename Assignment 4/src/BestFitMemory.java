@@ -10,6 +10,8 @@ import java.util.ArrayList;
  */
 public class BestFitMemory implements Memory{
     
+    AVLtree<Block> memory = new AVLtree<Block>();
+    
     @Override
     public int allocate(int size, int allocNum) {
         // TODO Auto-generated method stub
@@ -30,7 +32,12 @@ public class BestFitMemory implements Memory{
 
     @Override
     public ArrayList<Block> bucketSort() {
-        // TODO Auto-generated method stub
+        
+        
+        
+        
+        
+        
         return null;
     }
 
