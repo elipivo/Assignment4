@@ -196,6 +196,14 @@ public class MaxHeap<T extends Comparable<T>> {
     }
     
     /**
+     * Turns the heap into an ArrayList.
+     * @return ArrayList representation of heap.
+     */
+    public ArrayList<T> toArrayList() {
+    	return this.heap;
+    }
+    	
+    /**
      * Clear for testing.
      */
     public void clear() {
