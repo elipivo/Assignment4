@@ -137,12 +137,12 @@ public class WorstFitMemory implements Memory {
         int j = hi + 1;
         Block v = tmp.get(lo);
         while (true) {
-            while (tmp.get(++i).compareTo(v) < 0) {
+            while (tmp.get(++i).getMemAddress().compareTo(v.getMemAddress()) < 0) {
                 if (i == hi) {
                     break;
                 }
             }
-            while (v.compareTo(tmp.get(--j)) < 0) {
+            while (v.getMemAddress().compareTo(tmp.get(--j).getMemAddress) < 0) {
                 if (j == lo) {
                     break;
                 }
