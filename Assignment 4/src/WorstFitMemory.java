@@ -46,7 +46,7 @@ public class WorstFitMemory implements Memory {
         Block tmp = new Block(0, 0, size);
         this.emptyMemory.add(tmp);
         this.filledMemory = new ArrayList<Block>();
-        this.memSize = 0;
+        this.memSize = size;
         this.metrics = new ArrayList<Metric>();
         this.numAllocs = 0;
         this.numDefrag = 0;
@@ -61,14 +61,65 @@ public class WorstFitMemory implements Memory {
     
     @Override
     public int allocate(int size, int allocNumTmp) {
-        // TODO Auto-generated method stub
-        return 0;
+    	// TODO add metrics to this.
+    	final long startTime = System.currentTimeMillis();
+    	
+    	if (size > this.memSize) {
+        	this.numFailedAllocs++;
+        	this.sizeFailedAllocs += size;
+        	final long endTime = System.currentTimeMillis();
+        	this.allocTime += endTime - startTime;
+        	return -1;
+        }
+        if (size > this.emptyMemory.max().getSize()) {
+        	this.numFailedAllocs++;
+        	this.sizeFailedAllocs += size;
+        	final long endTime = System.currentTimeMillis();
+        	this.allocTime += endTime - startTime;
+        	return -1;
+        }
+        
+        Block max = this.emptyMemory.max();
+        Block alloc = new Block(allocNumTmp, max.getMemAddress(), size);
+        this.emptyMemory.dequeue();
+        max.setSize(max.getSize() - size);
+        if (max.getSize > 0) {
+        	this.emptyMemory.add(max);
+        }
+        
+        this.filledMemory.add(alloc);
+        
+        this.numAllocs++;
+        
+        final long endTime = System.currentTimeMillis();
+        this.allocTime += endTime - startTime;
+        
+        return alloc.getMemAddress();
     }
 
     @Override
     public boolean deallocate(int allocNum) {
-        // TODO Auto-generated method stub
-        return false;
+        Block dealloc = null;
+    	
+        for (Block b : this.filledMemory) {
+    		if (b.getAllocNum() == allocNum) {
+    			dealloc = b;
+    			this.filledMemory.remove(b);
+    			break;
+    		}
+    		
+    	}
+        
+    	if (dealloc == null) {
+    		return false;
+    	}
+        
+        //frees it
+        dealloc.setFilled(false);
+        this.emptyMemory.add(dealloc);
+    	
+    	// TODO Auto-generated method stub
+        return true;
     }
 
     @Override
