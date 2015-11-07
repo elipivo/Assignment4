@@ -141,7 +141,9 @@ public class WorstFitMemory implements Memory {
         }
         
         for (int i = 0; i < memoryAddress.length; i++) {
-            sortedMemory.add(memoryAddress[i]);
+            if (memoryAddress[i] != null) {
+            	sortedMemory.add(memoryAddress[i]);
+            }
         }
         
         final long endTime = System.currentTimeMillis();
