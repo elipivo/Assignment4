@@ -261,7 +261,7 @@ public class AVLtreeTest {
     public void testRemove() {
         
         //remove on null
-        assertFalse(tree.remove(3));
+        assertFalse(this.tree.remove(3));
         
         /* Build Tree
          *            8
@@ -273,23 +273,22 @@ public class AVLtreeTest {
          *1   3 5   7  9   11 13   15                
          */
         for (int i = 1; i <= 15; i++) {
-           tree.add(i); 
-           test.add(i);
+            tree.add(i); 
+            this.test.add(i);
         }
         
         //try to remove something that doesn't exit
-        assertFalse(tree.remove(16));
+        assertFalse(this.tree.remove(16));
         
         //remove each node from 15 to 1
         for (int i = 15; i > 0; i--) {
             System.out.println(i);
             assertTrue(tree.remove(i));
             
-            test.remove((Integer) i);
+            this.test.remove((Integer) i);
             Collections.sort(test);
             treeIter = tree.inOrder();
             testIter = test.iterator();
-            System.out.println(test.toString());
             for(Integer k : treeIter) { //test order is correct
                 assertEquals(k, testIter.next());
             }
@@ -314,7 +313,7 @@ public class AVLtreeTest {
         //remove each node from 1 to 15  
         for (int i = 1; i <= 15; i++) {
             assertTrue(tree.remove(i));
-            test.remove(i);
+            test.remove((Integer) i);
             Collections.sort(test);
             treeIter = tree.inOrder();
             testIter = test.iterator();
@@ -343,7 +342,7 @@ public class AVLtreeTest {
             }
             
             assertTrue(tree.remove(i));
-            test.remove(i);
+            test.remove((Integer) i);
             Collections.sort(test);
             treeIter = tree.inOrder();
             testIter = test.iterator();
@@ -356,7 +355,7 @@ public class AVLtreeTest {
             //then clear tree
             for (int n = 1; n <= 15; i++) {
                 tree.remove(i);
-                test.remove(i);
+                test.remove((Integer) i);
             }
             
         }
