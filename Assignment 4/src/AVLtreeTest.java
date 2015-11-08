@@ -287,6 +287,7 @@ public class AVLtreeTest {
             
             this.test.remove((Integer) i);
             Collections.sort(test);
+            System.out.println(tree.inOrder().toString());
             treeIter = tree.inOrder();
             testIter = test.iterator();
             for(Integer k : treeIter) { //test order is correct
