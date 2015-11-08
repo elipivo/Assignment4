@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 
+import jdk.nashorn.internal.ir.Block;
+
 /**
  * Worst Fit Memory Implementation.
  * CS 600.226 Data Structures Fall 2015
@@ -59,6 +61,8 @@ public class WorstFitMemory implements Memory {
         this.totalSizeQuicksort = 0;
     }
     
+    /*----MAIN METHODS----*/
+    
     @Override
     public int allocate(int size, int allocNumTmp) {
     	// TODO add metrics to this.
@@ -72,6 +76,7 @@ public class WorstFitMemory implements Memory {
         	return -1;
         }
         if (size > this.emptyMemory.max().getSize()) {
+        	//ADD DEFRAG HERE.
         	this.numFailedAllocs++;
         	this.sizeFailedAllocs += size;
         	final long endTime = System.currentTimeMillis();
@@ -100,34 +105,42 @@ public class WorstFitMemory implements Memory {
     @Override
     public boolean deallocate(int allocNum) {
         Block dealloc = null;
-    	
         for (Block b : this.filledMemory) {
     		if (b.getAllocNum() == allocNum) {
     			dealloc = b;
     			this.filledMemory.remove(b);
     			break;
     		}
-    		
     	}
-        
     	if (dealloc == null) {
     		return false;
     	}
-        
         //frees it
         dealloc.setFilled(false);
         this.emptyMemory.add(dealloc);
-    	
-    	// TODO Auto-generated method stub
         return true;
     }
 
     @Override
     public void defrag() {
-        // TODO Auto-generated method stub
+        ArrayList<Block> sorted = this.quickSort();
+    	for (int i = 0; i < sorted.size(); i++) {
+    		Block b = sorted.get(i);
+    		int diff = 0;
+    		if (i + 1 < sorted.size()) {
+    			diff = b.getMemAddress() - sorted.get(i + 1).getMemAddress();
+    		}
+    		if (Math.abs(diff) == 1) {
+    			//combine blocks
+    		}
+    	}
+    	// TODO Auto-generated method stub
         
     }
 
+    
+    /*----SORTING METHODS----*/
+    
     @Override
     public ArrayList<Block> bucketSort() {
         final long startTime = System.currentTimeMillis();
@@ -219,6 +232,59 @@ public class WorstFitMemory implements Memory {
         Block block = tmp.get(i);
         tmp.set(i, tmp.get(j));
         tmp.set(j, block);
+    }
+    
+    
+    
+    /*----ANALYSIS METHODS----*/
+    
+    /**
+     * Average time/size bucketsort
+     * @return avg time BS.
+     */
+    public double getBSTime() {
+    	return this.timeBucketsort / this.totalSizeBucketsort;
+    }
+    
+    /**
+     * Average time/size quicksort
+     * @return avg time QS.
+     */
+    public double getQSTime() {
+    	return this.timeQucksort / this.totalSizeQuicksort;
+    }
+    
+    /**
+     * Average time to process alloc.
+     * @return Average time.
+     */
+    public double getAvgTime() {
+    	return this.allocTime / this.numAllocs;
+    }
+    
+    /**
+     * Size of failed allocation attempts.
+     * @return sizeFailedAllocs.
+     */
+    public int getFailedSize() {
+    	return this.sizeFailedAllocs;
+    }
+    
+    
+    /**
+     * Number of failed allocation attempts.
+     * @return numFailedAllocs.
+     */
+    public int getFailedAllocs() {
+    	return this.numFailedAllocs;
+    }
+    
+    /**
+     * Returns the Number of Defragmentations.
+     * @return defrag
+     */
+    public int getDefrag() {
+    	return this.numDefrag;
     }
     
 }
