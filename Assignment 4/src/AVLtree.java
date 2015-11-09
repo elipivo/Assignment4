@@ -322,7 +322,7 @@ public class AVLtree<T extends Comparable<? super T>> {
             if (this.balanceFactor(curr.left) >= 0) {
                 curr = this.rotateWithLeftChild(curr);
             }
-            if (this.balanceFactor(curr.left) < -1) {
+            if (this.balanceFactor(curr.left) <= -1) {
                 curr = this.doubleWithLeftChild(curr);
             }
         }
@@ -331,7 +331,7 @@ public class AVLtree<T extends Comparable<? super T>> {
             if (this.balanceFactor(curr.right) <= 0) {
                 curr = this.rotateWithRightChild(curr);
             }
-            if (this.balanceFactor(curr.left) > 1) {
+            if (this.balanceFactor(curr.right) >= 1) {
                 curr = this.doubleWithRightChild(curr);
             }
         }
