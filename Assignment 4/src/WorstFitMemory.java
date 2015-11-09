@@ -76,12 +76,11 @@ public class WorstFitMemory implements Memory {
         	return -1;
         }
         if (size > this.emptyMemory.max().getSize()) {
-        	//ADD DEFRAG HERE.
-        	this.numFailedAllocs++;
-        	this.sizeFailedAllocs += size;
+        	this.defrag();
+        	int num = this.retryAlloc(size, allocNumTmp);
         	final long endTime = System.currentTimeMillis();
         	this.allocTime += endTime - startTime;
-        	return -1;
+        	return num;
         }
         
         Block max = this.emptyMemory.max();
@@ -102,6 +101,34 @@ public class WorstFitMemory implements Memory {
         return alloc.getMemAddress();
     }
 
+    /**
+     * Private Helper Method for allocation retry after dfrag.
+     * @param size size of block.
+     * @param allocNumTmp tmp alloc number
+     */
+    private int retryAlloc(int size, int allocNumTmp) {
+    	if (size > this.emptyMemory.max().getSize()) {
+        	this.numFailedAllocs++;
+        	this.sizeFailedAllocs += size;
+        	return -1;
+        }
+        
+        Block max = this.emptyMemory.max();
+        Block alloc = new Block(allocNumTmp, max.getMemAddress(), size);
+        this.emptyMemory.dequeue();
+        max.setSize(max.getSize() - size);
+        if (max.getSize > 0) {
+        	this.emptyMemory.add(max);
+        }
+        
+        this.filledMemory.add(alloc);
+        
+        this.numAllocs++;
+        
+        return alloc.getMemAddress();
+    }
+    
+    
     @Override
     public boolean deallocate(int allocNum) {
         Block dealloc = null;
@@ -123,6 +150,10 @@ public class WorstFitMemory implements Memory {
 
     @Override
     public void defrag() {
+    	if (this.emptyMemory.size() == 0) {
+    		return;
+    	}
+    	
         ArrayList<Block> sorted = this.quickSort();
     	for (int i = 0; i < sorted.size(); i++) {
     		Block b = sorted.get(i);
@@ -131,11 +162,18 @@ public class WorstFitMemory implements Memory {
     			diff = b.getMemAddress() - sorted.get(i + 1).getMemAddress();
     		}
     		if (Math.abs(diff) == 1) {
-    			//combine blocks
+    			Block tmp = sorted.remove(i + 1);
+    			Block good = sorted.get(i);
+    			int newSize = tmp.getSize() + good.getSize();
+    			int address = good.getMemAddress();
+    			Block putIn = new Block(-1, address, newSize);
+    			sorted.set(i, putIn);
+    			i--;
     		}
     	}
-    	// TODO Auto-generated method stub
-        
+    	
+    	this.emptyMemory.clear();
+    	this.emptyMemory = new MaxHeap(sorted);
     }
 
     
