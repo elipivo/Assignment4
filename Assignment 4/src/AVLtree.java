@@ -317,6 +317,7 @@ public class AVLtree<T extends Comparable<? super T>> {
      * @return the root node of the newly balanced subtree
      */
     private BNode balance(BNode curr) {
+        curr.height = max(this.height(curr.left), this.height(curr.right)) + 1;
         if (this.balanceFactor(curr) > 1) {
             if (this.balanceFactor(curr.left) >= 0) {
                 curr = this.rotateWithLeftChild(curr);
@@ -325,6 +326,7 @@ public class AVLtree<T extends Comparable<? super T>> {
                 curr = this.doubleWithLeftChild(curr);
             }
         }
+        
         if (this.balanceFactor(curr) < -1) {
             if (this.balanceFactor(curr.right) <= 0) {
                 curr = this.rotateWithRightChild(curr);
@@ -333,6 +335,8 @@ public class AVLtree<T extends Comparable<? super T>> {
                 curr = this.doubleWithRightChild(curr);
             }
         }
+        
+        
         return curr;
     }
 

@@ -210,9 +210,7 @@ public class AVLtreeTest {
         for(Integer i : treeIter) { //test order is correct
             assertEquals(i, testIter.next());
         }
-        assertFalse(testIter.hasNext());
-        assertTrue(tree.isBalanced()); //test the tree is balanced
-        
+        assertFalse(testIter.hasNext());        
         /* 
          *        40
          *     /     \
@@ -231,6 +229,7 @@ public class AVLtreeTest {
             assertEquals(i, testIter.next());
         }
         assertFalse(testIter.hasNext());
+        System.out.println(tree.preOrder().toString());
         assertTrue(tree.isBalanced()); //test the tree is balanced
         
         /* Forces Left-Right Case w/ Subtree Handling
