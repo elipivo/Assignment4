@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 
-import jdk.nashorn.internal.ir.Block;
 
 /**
  * Worst Fit Memory Implementation.
@@ -65,30 +64,30 @@ public class WorstFitMemory implements Memory {
     
     @Override
     public int allocate(int size, int allocNumTmp) {
-    	// TODO add metrics to this.
-    	final long startTime = System.currentTimeMillis();
-    	
-    	if (size > this.memSize) {
-        	this.numFailedAllocs++;
-        	this.sizeFailedAllocs += size;
-        	final long endTime = System.currentTimeMillis();
-        	this.allocTime += endTime - startTime;
-        	return -1;
+        // TODO add metrics to this.
+        final long startTime = System.currentTimeMillis();
+        
+        if (size > this.memSize) {
+            this.numFailedAllocs++;
+            this.sizeFailedAllocs += size;
+            final long endTime = System.currentTimeMillis();
+            this.allocTime += endTime - startTime;
+            return -1;
         }
         if (size > this.emptyMemory.max().getSize()) {
-        	this.defrag();
-        	int num = this.retryAlloc(size, allocNumTmp);
-        	final long endTime = System.currentTimeMillis();
-        	this.allocTime += endTime - startTime;
-        	return num;
+            this.defrag();
+            int num = this.retryAlloc(size, allocNumTmp);
+            final long endTime = System.currentTimeMillis();
+            this.allocTime += endTime - startTime;
+            return num;
         }
         
         Block max = this.emptyMemory.max();
         Block alloc = new Block(allocNumTmp, max.getMemAddress(), size);
         this.emptyMemory.dequeue();
         max.setSize(max.getSize() - size);
-        if (max.getSize > 0) {
-        	this.emptyMemory.add(max);
+        if (max.getSize() > 0) {
+            this.emptyMemory.add(max);
         }
         
         this.filledMemory.add(alloc);
@@ -105,20 +104,21 @@ public class WorstFitMemory implements Memory {
      * Private Helper Method for allocation retry after dfrag.
      * @param size size of block.
      * @param allocNumTmp tmp alloc number
+     * @return memaddress.
      */
     private int retryAlloc(int size, int allocNumTmp) {
-    	if (size > this.emptyMemory.max().getSize()) {
-        	this.numFailedAllocs++;
-        	this.sizeFailedAllocs += size;
-        	return -1;
+        if (size > this.emptyMemory.max().getSize()) {
+            this.numFailedAllocs++;
+            this.sizeFailedAllocs += size;
+            return -1;
         }
         
         Block max = this.emptyMemory.max();
         Block alloc = new Block(allocNumTmp, max.getMemAddress(), size);
         this.emptyMemory.dequeue();
         max.setSize(max.getSize() - size);
-        if (max.getSize > 0) {
-        	this.emptyMemory.add(max);
+        if (max.getSize() > 0) {
+            this.emptyMemory.add(max);
         }
         
         this.filledMemory.add(alloc);
@@ -133,15 +133,15 @@ public class WorstFitMemory implements Memory {
     public boolean deallocate(int allocNum) {
         Block dealloc = null;
         for (Block b : this.filledMemory) {
-    		if (b.getAllocNum() == allocNum) {
-    			dealloc = b;
-    			this.filledMemory.remove(b);
-    			break;
-    		}
-    	}
-    	if (dealloc == null) {
-    		return false;
-    	}
+            if (b.getAllocNum() == allocNum) {
+                dealloc = b;
+                this.filledMemory.remove(b);
+                break;
+            }
+        }
+        if (dealloc == null) {
+            return false;
+        }
         //frees it
         dealloc.setFilled(false);
         this.emptyMemory.add(dealloc);
@@ -150,30 +150,34 @@ public class WorstFitMemory implements Memory {
 
     @Override
     public void defrag() {
-    	if (this.emptyMemory.size() == 0) {
-    		return;
-    	}
-    	
+        if (this.emptyMemory.size() == 0) {
+            return;
+        }
+        //timing sorts, only use one later.
         ArrayList<Block> sorted = this.quickSort();
-    	for (int i = 0; i < sorted.size(); i++) {
-    		Block b = sorted.get(i);
-    		int diff = 0;
-    		if (i + 1 < sorted.size()) {
-    			diff = b.getMemAddress() - sorted.get(i + 1).getMemAddress();
-    		}
-    		if (Math.abs(diff) == 1) {
-    			Block tmp = sorted.remove(i + 1);
-    			Block good = sorted.get(i);
-    			int newSize = tmp.getSize() + good.getSize();
-    			int address = good.getMemAddress();
-    			Block putIn = new Block(-1, address, newSize);
-    			sorted.set(i, putIn);
-    			i--;
-    		}
-    	}
-    	
-    	this.emptyMemory.clear();
-    	this.emptyMemory = new MaxHeap(sorted);
+        ArrayList<Block> bucketSort = this.bucketSort();
+        bucketSort.clear();
+        
+        for (int i = 0; i < sorted.size();) {
+            Block b = sorted.get(i);
+            int diff = 0;
+            if (i + 1 < sorted.size()) {
+                diff = b.getMemAddress() - sorted.get(i + 1).getMemAddress();
+            }
+            if (Math.abs(diff) == 1) {
+                Block tmp = sorted.remove(i + 1);
+                Block good = sorted.get(i);
+                int newSize = tmp.getSize() + good.getSize();
+                int address = good.getMemAddress();
+                Block putIn = new Block(-1, address, newSize);
+                sorted.set(i, putIn);
+                i--;
+            }
+            i++;
+        }
+        
+        this.emptyMemory.clear();
+        this.emptyMemory = new MaxHeap<Block>(sorted);
     }
 
     
@@ -193,7 +197,7 @@ public class WorstFitMemory implements Memory {
         
         for (int i = 0; i < memoryAddress.length; i++) {
             if (memoryAddress[i] != null) {
-            	sortedMemory.add(memoryAddress[i]);
+                sortedMemory.add(memoryAddress[i]);
             }
         }
         
@@ -241,12 +245,12 @@ public class WorstFitMemory implements Memory {
         int j = hi + 1;
         Block v = tmp.get(lo);
         while (true) {
-            while (tmp.get(++i).getMemAddress().compareTo(v.getMemAddress()) < 0) {
+            while ((tmp.get(++i).getMemAddress() - v.getMemAddress()) < 0) {
                 if (i == hi) {
                     break;
                 }
             }
-            while (v.getMemAddress().compareTo(tmp.get(--j).getMemAddress) < 0) {
+            while ((v.getMemAddress() - tmp.get(--j).getMemAddress()) < 0) {
                 if (j == lo) {
                     break;
                 }
@@ -277,19 +281,19 @@ public class WorstFitMemory implements Memory {
     /*----ANALYSIS METHODS----*/
     
     /**
-     * Average time/size bucketsort
+     * Average time/size bucketsort.
      * @return avg time BS.
      */
     public double getBSTime() {
-    	return this.timeBucketsort / this.totalSizeBucketsort;
+        return this.timeBucketsort / this.totalSizeBucketsort;
     }
     
     /**
-     * Average time/size quicksort
+     * Average time/size quicksort.
      * @return avg time QS.
      */
     public double getQSTime() {
-    	return this.timeQucksort / this.totalSizeQuicksort;
+        return this.timeQucksort / this.totalSizeQuicksort;
     }
     
     /**
@@ -297,7 +301,7 @@ public class WorstFitMemory implements Memory {
      * @return Average time.
      */
     public double getAvgTime() {
-    	return this.allocTime / this.numAllocs;
+        return this.allocTime / this.numAllocs;
     }
     
     /**
@@ -305,7 +309,7 @@ public class WorstFitMemory implements Memory {
      * @return sizeFailedAllocs.
      */
     public int getFailedSize() {
-    	return this.sizeFailedAllocs;
+        return this.sizeFailedAllocs;
     }
     
     
@@ -314,7 +318,7 @@ public class WorstFitMemory implements Memory {
      * @return numFailedAllocs.
      */
     public int getFailedAllocs() {
-    	return this.numFailedAllocs;
+        return this.numFailedAllocs;
     }
     
     /**
@@ -322,7 +326,7 @@ public class WorstFitMemory implements Memory {
      * @return defrag
      */
     public int getDefrag() {
-    	return this.numDefrag;
+        return this.numDefrag;
     }
     
 }
