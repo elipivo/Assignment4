@@ -49,6 +49,18 @@ public class AVLtree<T extends Comparable<? super T>> {
         public boolean isLeaf() {
             return this.left == null && this.right == null;
         }
+        /**
+         * Clone.
+         * @return
+         * Clone
+         */
+        public BNode clone() {
+            BNode temp = new BNode(this.data);
+            temp.height = this.height;
+            temp.right = this.right;
+            temp.left = this.left;
+            return temp;
+        }
     }
 
     /** The root of the tree. */
@@ -211,7 +223,7 @@ public class AVLtree<T extends Comparable<? super T>> {
             curr.left = left.right;
         }
         //no children
-        if (left.left == null && left.right == null){
+        if (left.left == null && left.right == null) {
             curr.left = null;
         }
     }
@@ -256,14 +268,10 @@ public class AVLtree<T extends Comparable<? super T>> {
      */
     private BNode delete(BNode curr, T value) {
  
-        if (curr == null) {
+        if (curr == null || value == null) {
             return null;
         }
-        if (value == this.root()){
-            BNode min = this.findMin(this.root.right);
-            this.root = min;
-            //this.delete(right.right, min.data);
-        }
+        
         if (curr.left != null && curr.left.data.compareTo(value) == 0) {
             this.deleteLeft(curr);
             curr = this.balance(curr);
@@ -278,9 +286,24 @@ public class AVLtree<T extends Comparable<? super T>> {
             curr.left = this.delete(curr.left, value);
             curr = this.balance(curr);
 
-        } else { // val >= temp
+        } else if (value.compareTo(curr.data) > 0) { // val >= temp
             curr.right = this.delete(curr.right, value);
             curr = this.balance(curr);
+        }
+        if (value == curr.data) {
+            BNode lChild = this.root.left;
+            BNode rChild = this.root.right;
+            BNode min = this.findMin(rChild);
+            if (min != null) {
+                min = min.clone();
+                rChild = this.delete(rChild, min.data);
+                min.left = lChild;
+                min.right = rChild;
+                
+            }
+            this.root = min;
+            return this.root;
+            
         }
         return curr;
 
@@ -413,6 +436,7 @@ public class AVLtree<T extends Comparable<? super T>> {
      *            node to rotate
      * @return updated node
      */
+    @SuppressWarnings("static-access")
     private BNode rotateWithLeftChild(BNode k2) {
         if (k2 == null) {
             return null;
@@ -421,7 +445,8 @@ public class AVLtree<T extends Comparable<? super T>> {
         if (k1 != null) {
             k2.left = k1.right;
             k1.right = k2;
-            k2.height = this.max(this.height(k2.left), this.height(k2.right)) + 1;
+            k2.height = this.max(this.height(k2.left),
+                    this.height(k2.right)) + 1;
             k1.height = this.max(this.height(k1.left), k2.height) + 1;
         }
         return k1;
