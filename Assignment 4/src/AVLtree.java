@@ -49,10 +49,11 @@ public class AVLtree<T extends Comparable<? super T>> {
         public boolean isLeaf() {
             return this.left == null && this.right == null;
         }
+
         /**
          * Clone.
-         * @return
-         * Clone
+         * 
+         * @return Clone
          */
         public BNode clone() {
             BNode temp = new BNode(this.data);
@@ -222,7 +223,7 @@ public class AVLtree<T extends Comparable<? super T>> {
             // child
             curr.left = left.right;
         }
-        //no children
+        // no children
         if (left.left == null && left.right == null) {
             curr.left = null;
         }
@@ -245,16 +246,39 @@ public class AVLtree<T extends Comparable<? super T>> {
         }
         if (right.left != null && right.right == null) { // One left
                                                          // child
-            curr.left = right.left;
+            curr.right = right.left;
         }
         if (right.left == null && right.right != null) { // One right
                                                          // child
-            curr.left = right.right;
+            curr.right = right.right;
         }
         if (right.left == null && right.right == null) {
             curr.right = null;
         }
 
+    }
+    /**
+     * Helper method that deletes the root.
+     */
+    private BNode deleteRoot() {
+        BNode lChild = this.root.left;
+        BNode rChild = this.root.right;
+        BNode min = this.findMin(rChild);
+        if (min == null && lChild != null) {
+            // No right child to choose new value from, choose left child
+            this.root = lChild;
+            return this.root;
+        }
+        if (min != null) {
+            min = min.clone();
+            rChild = this.delete(rChild, min.data);
+            min.left = lChild;
+            min.right = rChild;
+
+        }
+
+        this.root = min;
+        return this.root;
     }
 
     /**
@@ -267,17 +291,20 @@ public class AVLtree<T extends Comparable<? super T>> {
      * @return the new subtree after rebalancing
      */
     private BNode delete(BNode curr, T value) {
- 
+
         if (curr == null || value == null) {
             return null;
         }
-        
-        if (curr.left != null && curr.left.data.compareTo(value) == 0) {
+        if (value == this.root.data) {
+            this.deleteRoot();
+            //this.root = this.balance(this.root);
+            return this.root;
+
+        } else if (curr.left != null && curr.left.data.compareTo(value) == 0) {
             this.deleteLeft(curr);
             curr = this.balance(curr);
-        }
-
-        if (curr.right != null && curr.right.data.compareTo(value) == 0) {
+        } else if (curr.right != null
+                && curr.right.data.compareTo(value) == 0) {
             this.deleteRight(curr);
             curr = this.balance(curr);
 
@@ -290,21 +317,7 @@ public class AVLtree<T extends Comparable<? super T>> {
             curr.right = this.delete(curr.right, value);
             curr = this.balance(curr);
         }
-        if (value == curr.data) {
-            BNode lChild = this.root.left;
-            BNode rChild = this.root.right;
-            BNode min = this.findMin(rChild);
-            if (min != null) {
-                min = min.clone();
-                rChild = this.delete(rChild, min.data);
-                min.left = lChild;
-                min.right = rChild;
-                
-            }
-            this.root = min;
-            return this.root;
-            
-        }
+
         return curr;
 
     }
@@ -318,25 +331,23 @@ public class AVLtree<T extends Comparable<? super T>> {
      */
     private BNode balance(BNode curr) {
         curr.height = max(this.height(curr.left), this.height(curr.right)) + 1;
-        if (this.balanceFactor(curr) > 1) {
-            if (this.balanceFactor(curr.left) >= 0) {
+        int currFactor = this.balanceFactor(curr);
+        if (currFactor > 1) {
+            int lFactor = this.balanceFactor(curr.left);
+            if (lFactor >= 0) {
                 curr = this.rotateWithLeftChild(curr);
-            }
-            if (this.balanceFactor(curr.left) <= -1) {
+            } else if (lFactor <= -1) {
                 curr = this.doubleWithLeftChild(curr);
             }
-        }
-        
-        if (this.balanceFactor(curr) < -1) {
-            if (this.balanceFactor(curr.right) <= 0) {
+        } else if (this.balanceFactor(curr) < -1) {
+            int rFactor = this.balanceFactor(curr.right);
+            if (rFactor <= 0) {
                 curr = this.rotateWithRightChild(curr);
-            }
-            if (this.balanceFactor(curr.right) >= 1) {
+            } else if (rFactor >= 1) {
                 curr = this.doubleWithRightChild(curr);
             }
         }
-        
-        
+
         return curr;
     }
 
@@ -403,8 +414,7 @@ public class AVLtree<T extends Comparable<? super T>> {
             return true;
         }
         return this.isBalanced(curr.left) && this.isBalanced(curr.right)
-                && Math.abs(this.height(curr.left)
-                        - this.height(curr.right)) < 2;
+                && Math.abs(this.height(curr.left) - this.height(curr.right)) < 2;
     }
 
     /**
@@ -449,8 +459,7 @@ public class AVLtree<T extends Comparable<? super T>> {
         if (k1 != null) {
             k2.left = k1.right;
             k1.right = k2;
-            k2.height = this.max(this.height(k2.left),
-                    this.height(k2.right)) + 1;
+            k2.height = this.max(this.height(k2.left), this.height(k2.right)) + 1;
             k1.height = this.max(this.height(k1.left), k2.height) + 1;
         }
         return k1;
