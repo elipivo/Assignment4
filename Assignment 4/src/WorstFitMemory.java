@@ -344,7 +344,7 @@ public class WorstFitMemory implements Memory {
     public int getDefrag() {
         return this.numDefrag;
     }
-    
+   
     /**
      * Returns filled memory.
      * @return AL of filled mem.
