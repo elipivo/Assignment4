@@ -257,6 +257,29 @@ public class AVLtree<T extends Comparable<? super T>> {
         }
 
     }
+    /**
+     * Helper method that deletes the root.
+     */
+    private BNode deleteRoot() {
+        BNode lChild = this.root.left;
+        BNode rChild = this.root.right;
+        BNode min = this.findMin(rChild);
+        if (min == null && lChild != null) {
+            // No right child to choose new value from, choose left child
+            this.root = lChild;
+            return this.root;
+        }
+        if (min != null) {
+            min = min.clone();
+            rChild = this.delete(rChild, min.data);
+            min.left = lChild;
+            min.right = rChild;
+
+        }
+
+        this.root = min;
+        return this.root;
+    }
 
     /**
      * Helper delete method. - This does the real work - IMPLEMENT!
@@ -272,13 +295,16 @@ public class AVLtree<T extends Comparable<? super T>> {
         if (curr == null || value == null) {
             return null;
         }
+        if (value == this.root.data) {
+            this.deleteRoot();
+            //this.root = this.balance(this.root);
+            return this.root;
 
-        if (curr.left != null && curr.left.data.compareTo(value) == 0) {
+        } else if (curr.left != null && curr.left.data.compareTo(value) == 0) {
             this.deleteLeft(curr);
             curr = this.balance(curr);
-        }
-
-        if (curr.right != null && curr.right.data.compareTo(value) == 0) {
+        } else if (curr.right != null
+                && curr.right.data.compareTo(value) == 0) {
             this.deleteRight(curr);
             curr = this.balance(curr);
 
@@ -291,27 +317,7 @@ public class AVLtree<T extends Comparable<? super T>> {
             curr.right = this.delete(curr.right, value);
             curr = this.balance(curr);
         }
-        else if (value == curr.data) {
-            BNode lChild = this.root.left;
-            BNode rChild = this.root.right;
-            BNode min = this.findMin(rChild);
-            if (min == null && lChild != null) {
-                //No right child to choose new value from, choose left child
-                this.root = lChild;
-                return this.root;
-            }
-            if (min != null) {
-                min = min.clone();
-                rChild = this.delete(rChild.right, min.data);
-                min.left = lChild;
-                min.right = rChild;
 
-            }
-            
-            this.root = min;
-            return this.root;
-
-        }
         return curr;
 
     }
