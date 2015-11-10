@@ -135,7 +135,7 @@ public class Block implements Comparable<Block> {
      */
     public String toString() {
         return "Block: " + this.memAddress + " Size: " 
-                + this.size + " Filled: " + this.filled + " Allocation#: "
-                + this.allocNum;
+                + this.size + " Allocation#: "
+                + this.allocNum + " ";
     }
 }
