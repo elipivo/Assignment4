@@ -18,7 +18,7 @@
  *  Test for BucketSort
  */
 
-   
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
@@ -29,6 +29,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 import org.junit.Before;
@@ -411,6 +412,59 @@ public class WorstFitTest {
         assertTrue(mem.deallocate(1));
         assertTrue(mem.getFilledMem().size() == 0);
         assertEquals(mem.getEmptyMem().size(), 1);
+    }
+    
+    @Test
+    public void testSort() {
+        mem = new WorstFitMemory(55);
+        assertTrue(mem.getEmptyMem().size() == 1);
+        assertTrue(mem.getFilledMem().size() == 0);
+        
+        //allocate like this:
+        //|1*|2*|3*|4*|5*|6*|7*|8*|9*|10*|
+        for (int i = 0; i < 10; i++) {
+            mem.allocate(i + 1, i);
+            assertTrue(mem.getFilledMem().size() == (i + 1));
+        }
+        
+        //|1|2|3|4|5|6|7|8|9|10|
+        for (int i = 0; i < 10; i++) {
+            assertTrue(mem.deallocate(i));
+            assertTrue(mem.getFilledMem().size() == 9 - i);
+            assertTrue(mem.getEmptyMem().size() == i + 1);
+        }
+        
+        //now everything is free, but due to heap, in order of size, not address.
+        assertTrue(!mem.getEmptyMem().toString().equals("[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"));
+        
+        //now sort
+        ArrayList<Block> tmp = mem.quickSort();
+        ArrayList<Block> tmp1 = mem.bucketSort();
+        //equal sorting?
+        assertEquals(tmp, tmp1);
+        
+        //check if in order
+        for (int i = 0; i < 10; i++) {
+           assertEquals(tmp.get(i).getMemAddress(), tmp1.get(i).getMemAddress());
+        }
+        
+        //this is what mem address are.
+        int[] memAddress = new int[10];
+        for (int i = 0; i < 10; i++) {
+            memAddress[i] = mem.getEmptyMem().get(i).getMemAddress();
+        }
+        
+        //sort mem address.
+        Arrays.sort(memAddress);
+        
+        //check both lists from sorts to see if sorted still.
+        for (int i = 0; i < 10; i++) {
+            assertEquals(tmp.get(i).getMemAddress(), memAddress[i]);
+            assertEquals(tmp1.get(i).getMemAddress(), memAddress[i]);
+        }
+        
+        //sorting works 
+
     }
     
     
