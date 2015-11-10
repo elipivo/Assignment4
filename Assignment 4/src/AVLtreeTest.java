@@ -312,11 +312,14 @@ public class AVLtreeTest {
 
         //remove each node from 1 to 15  
         for (int i = 1; i <= 15; i++) {
+            System.out.println(i);
             assertTrue(tree.remove(i));
+            
             test.remove((Integer) i);
             Collections.sort(test);
             treeIter = tree.inOrder();
             testIter = test.iterator();
+            System.out.println(treeIter.toString());
             for(Integer k : treeIter) { //test order is correct
                 assertEquals(k, testIter.next());
             }
@@ -340,11 +343,13 @@ public class AVLtreeTest {
                 tree.add(n); 
                 test.add(n);
             }
-            
+            System.out.println(tree.inOrder().toString());
+            System.out.println(i);
             assertTrue(tree.remove(i));
             test.remove((Integer) i);
             Collections.sort(test);
             treeIter = tree.inOrder();
+            System.out.println(treeIter.toString());
             testIter = test.iterator();
             for(Integer k : treeIter) { //test order is correct
                 assertEquals(k, testIter.next());
@@ -353,9 +358,9 @@ public class AVLtreeTest {
             assertTrue(this.tree.isBalanced()); //test the tree is balanced
             
             //then clear tree
-            for (int n = 1; n <= 15; i++) {
-                tree.remove(i);
-                test.remove((Integer) i);
+            for (int n = 1; n <= 15; n++) {
+                tree.remove(n);
+                test.remove((Integer) n);
             }
             
         }
