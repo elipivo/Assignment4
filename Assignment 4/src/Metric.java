@@ -19,18 +19,18 @@ public class Metric {
     /** Address working on. */
     private int address;
     /** Size requested by user for operation. */
-    private int sizeReg;
+    private int sizeReq;
     
     /**
      * Default Constructor.
      */
     public Metric() {
-    	this.alloc = false;
-    	this.id = -1;
-    	this.defrag = false;
-    	this.success = false;
-    	this.address = -1;
-    	this.sizeReq = -1;
+        this.alloc = false;
+        this.id = -1;
+        this.defrag = false;
+        this.success = false;
+        this.address = -1;
+        this.sizeReq = -1;
     }
     
     /**
@@ -111,12 +111,49 @@ public class Metric {
     }
     /**
      * Set size req.
-     * @param sizeRegNum the sizeReg to set
+     * @param sizeReqNum the sizeReg to set
      */
     public void setSizeReq(int sizeReqNum) {
         this.sizeReq = sizeReqNum;
     }
     
+    /**
+     * To String Method.
+     * @return string of metric data.
+     */
+    public String toString() {
+        String output = "";
+        if (this.alloc) {
+            String defragStr = "";
+            String sucString = "SUCCESS";
+
+            if (this.defrag) {
+                defragStr = "DF";
+            }
+            if (this.address == -1) {
+                sucString = "FAILED";
+            }
+            output += String.format("A%4d%4s  %-7s%6s%7s        ", 
+                 this.id, defragStr, sucString, this.address, this.sizeReq);
+
+            return output;
+        }
+        
+        String sucString = "SUCCESS";
+        int deallocSize = 0;
+        int addressNum = 0;
+
+        if (!this.success) {
+            sucString = "FAILED";
+            addressNum = -1;
+        } else {
+            addressNum = this.address;
+            deallocSize = this.sizeReq;
+        }
+        output += String.format("D%4s%4s  %-7s%6s%7s        ",
+            this.id, "", sucString, addressNum, deallocSize);
+        return output;
+    }
     
     
     

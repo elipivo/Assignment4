@@ -67,12 +67,20 @@ public class WorstFitMemory implements Memory {
     
     @Override
     public int allocate(int size, int allocNumTmp) {
-        // TODO add metrics to this.
         final long startTime = System.currentTimeMillis();
+        
+        Metric stat = new Metric();
+        stat.setAlloc(true);
         
         if (this.emptyMemory.size() == 0) {
             this.numFailedAllocs++;
             this.sizeFailedAllocs += size;
+            stat.setSuccess(false);
+            stat.setAddress(-1);
+            stat.setDefrag(false);
+            stat.setId(allocNumTmp);
+            stat.setSizeReq(size);
+            this.metrics.add(stat);
             final long endTime = System.currentTimeMillis();
             this.allocTime += endTime - startTime;
             return -1;
@@ -81,6 +89,12 @@ public class WorstFitMemory implements Memory {
         if (size > this.memSize) {
             this.numFailedAllocs++;
             this.sizeFailedAllocs += size;
+            stat.setSuccess(false);
+            stat.setAddress(-1);
+            stat.setDefrag(false);
+            stat.setId(allocNumTmp);
+            stat.setSizeReq(size);
+            this.metrics.add(stat);
             final long endTime = System.currentTimeMillis();
             this.allocTime += endTime - startTime;
             return -1;
@@ -88,6 +102,16 @@ public class WorstFitMemory implements Memory {
         if (size > this.emptyMemory.max().getSize()) {
             this.defrag();
             int num = this.retryAlloc(size, allocNumTmp);
+            if (num == -1) {
+                stat.setSuccess(false);
+            } else {
+                stat.setSuccess(true);
+            }
+            stat.setAddress(num);
+            stat.setDefrag(true);
+            stat.setId(allocNumTmp);
+            stat.setSizeReq(size);
+            this.metrics.add(stat);
             final long endTime = System.currentTimeMillis();
             this.allocTime += endTime - startTime;
             return num;
@@ -105,6 +129,13 @@ public class WorstFitMemory implements Memory {
         this.filledMemory.add(alloc);
         
         this.numAllocs++;
+        
+        stat.setSuccess(true);
+        stat.setAddress(alloc.getMemAddress());
+        stat.setDefrag(false);
+        stat.setId(allocNumTmp);
+        stat.setSizeReq(size);
+        this.metrics.add(stat);
         
         final long endTime = System.currentTimeMillis();
         this.allocTime += endTime - startTime;
@@ -144,6 +175,9 @@ public class WorstFitMemory implements Memory {
     
     @Override
     public boolean deallocate(int allocNum) {
+        Metric stat = new Metric();
+        stat.setAlloc(false);
+        
         Block dealloc = null;
         for (Block b : this.filledMemory) {
             if (b.getAllocNum() == allocNum) {
@@ -153,11 +187,23 @@ public class WorstFitMemory implements Memory {
             }
         }
         if (dealloc == null) {
+            stat.setAddress(-1);
+            stat.setDefrag(false);
+            stat.setId(allocNum);
+            stat.setSizeReq(-1);
+            stat.setSuccess(false);
+            this.metrics.add(stat);
             return false;
         }
         //frees it
         dealloc.setFilled(false);
         this.emptyMemory.add(dealloc);
+        stat.setAddress(dealloc.getMemAddress());
+        stat.setDefrag(false);
+        stat.setId(dealloc.getAllocNum());
+        stat.setSizeReq(dealloc.getSize());
+        stat.setSuccess(true);
+        this.metrics.add(stat);
         return true;
     }
 
@@ -301,6 +347,9 @@ public class WorstFitMemory implements Memory {
      * @return avg time BS.
      */
     public double getBSTime() {
+        if (this.totalSizeBucketsort == 0) {
+            return -1;
+        }
         return this.timeBucketsort / this.totalSizeBucketsort;
     }
     
@@ -309,6 +358,9 @@ public class WorstFitMemory implements Memory {
      * @return avg time QS.
      */
     public double getQSTime() {
+        if (this.totalSizeQuicksort == 0) {
+            return -1;
+        }
         return this.timeQucksort / this.totalSizeQuicksort;
     }
     
@@ -317,6 +369,9 @@ public class WorstFitMemory implements Memory {
      * @return Average time.
      */
     public double getAvgTime() {
+        if (this.numAllocs == 0) {
+            return -1;
+        }
         return this.allocTime / this.numAllocs;
     }
     
@@ -344,7 +399,7 @@ public class WorstFitMemory implements Memory {
     public int getDefrag() {
         return this.numDefrag;
     }
-   
+    
     /**
      * Returns filled memory.
      * @return AL of filled mem.
@@ -359,6 +414,15 @@ public class WorstFitMemory implements Memory {
      */
     public ArrayList<Block> getEmptyMem() {
         return this.emptyMemory.toArrayList();
+    }
+    
+    
+    /**
+     * Gets the metrics so far.
+     * @return ArrayList of metrics to be printed.
+     */
+    public ArrayList<Metric> getMetrics() {
+        return this.metrics;
     }
     
 }
