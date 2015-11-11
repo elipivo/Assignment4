@@ -1,4 +1,3 @@
-
 /**
  * 600.226, Fall 2015
  * Starter code for AVLtree implementation
@@ -174,13 +173,16 @@ public class AVLtree<T extends Comparable<? super T>> {
         }
         if (val.compareTo(temp.data) < 0) {
             temp.left = this.insert(val, temp.left);
-            temp = this.balance(temp);
 
         } else { // val >= temp
             temp.right = this.insert(val, temp.right);
-            temp = this.balance(temp);
-
         }
+        
+        //update height for current node
+        curr.height = Math.max(this.height(curr.left), this.height(curr.right))
+                + 1;
+        
+        temp = this.balance(temp);
         return temp;
     }
 
@@ -201,138 +203,78 @@ public class AVLtree<T extends Comparable<? super T>> {
         }
         return false;
     }
-
+    
     /**
-     * Deletes from the left.
-     * 
-     * @param curr
-     *            Current node
-     */
-    private void deleteLeft(BNode curr) {
-        BNode left = curr.left; // To simplify typing, might inline
-        // later
-        if (left.left != null && left.right != null) { // Two children
-            BNode min = this.findMin(left.right).clone();
-            min.left = left.left;
-            min.right = left.right;
-            this.delete(left, min.data);
-            curr.left = min;
-        } else if (left.left != null && left.right == null) { // One left child
-            curr.left = left.left;
-        } else if (left.left == null && left.right != null) { // One right
-            // child
-            curr.left = left.right;
-        }
-        // no children
-        else if (left.left == null && left.right == null) {
-            curr.left = null;
-        }
-    }
-
-    /**
-     * Deletes from the right.
-     * 
-     * @param curr
-     *            Current node
-     */
-    private void deleteRight(BNode curr) {
-
-        BNode right = curr.right; // To simplify typing, might inline
-                                  // later
-        if (right.left != null && right.right != null) { // Two children
-            BNode min = this.findMin(right.right).clone();
-            min.left = right.left;
-            min.right = right.right;
-            this.delete(right, min.data);
-            curr.right = min;
-        }
-        if (right.left != null && right.right == null) { // One left
-                                                         // child
-            curr.right = right.left;
-        }
-        if (right.left == null && right.right != null) { // One right
-                                                         // child
-            curr.right = right.right;
-        }
-        if (right.left == null && right.right == null) {
-            curr.right = null;
-        }
-
-    }
-
-    /**
-     * Helper method that deletes the root.
-     */
-    private void deleteRoot() {
-        if (this.root.left != null && this.root.right != null) {
-            // Two children
-            BNode min = this.findMin(this.root.right).clone();
-            min.left = this.root.left;
-            min.right = this.root.right;
-            this.delete(this.root.right, min.data);
-            this.root = min;
-        } else if (this.root.left != null && this.root.right == null) {
-            // Only one left child
-            this.root = this.root.left;
-        } else if (this.root.left == null && this.root.right != null) {
-            // Only one right child
-            this.root = this.root.right;
-        } else if (this.root.left == null && this.root.right == null) {
-            // No children
-            this.root = null;
-        }
-    }
-
-    /*
-     * BNode lChild = this.root.left; BNode rChild = this.root.right; BNode min
-     * = this.findMin(rChild); if (min == null && lChild != null) { // No right
-     * child to choose new value from, choose left child this.root = lChild;
-     * return this.root; } if (min != null) { min = min.clone(); rChild =
-     * this.delete(this.root, min.data); min.left = lChild; min.right = rChild;
-     * 
-     * }
-     * 
-     * this.root = min; return this.root; }
-     */
-    /**
-     * Helper delete method. - This does the real work - IMPLEMENT!
-     * 
-     * @param value
-     *            the value to delete
-     * @param curr
-     *            the root of the subtree to look in
-     * @return the new subtree after rebalancing
-     */
+   * Helper delete method. - This does the real work - IMPLEMENT!
+   * 
+   * @param value
+   *            the value to delete
+   * @param curr
+   *            the root of the subtree to look in
+   * @return the new subtree after rebalancing
+   */
     private BNode delete(BNode curr, T value) {
+        //go to the node that needs to be deleted
 
-        if (curr == null || value == null) {
-            return null;
-        }
-        if (value == this.root.data) {
-            this.deleteRoot();
-            // this.root = this.balance(this.root);
-            return this.root;
+        if (curr == null) { //should I include || value == null?
+            //if curr is empty or value is empty just return curr unchanged
 
-        } else if (curr.left != null && curr.left.data.compareTo(value) == 0) {
-            this.deleteLeft(curr);
-            curr = this.balance(curr);
-        } else if (curr.right != null && curr.right.data.compareTo(value) == 0) {
-            this.deleteRight(curr);
-            curr = this.balance(curr);
+            return curr;
+
+        } else if (value.equals(curr.data)) {
+            //carry out delete if equal
+            
+            System.out.println("Delete Here.");
+
+            if (curr.left == null && curr.right == null) {
+                //we're deleting a leaf
+                return null;
+                
+            }  else if (curr.left != null && curr.right != null) {
+                //we're deleting something with two children
+                
+                //replace with the in order successor
+                curr.data = this.findMin(curr.right).data;
+                
+                //delete the in order successor
+                curr.right = this.delete(curr.right, curr.data);
+                
+            } else if (curr.left != null) {
+                //we're deleting something with only a left child  
+                return curr.left;
+                
+            } else {
+                //we're deleting something with only a right child
+                return curr.right;   
+            }
 
         } else if (value.compareTo(curr.data) < 0) {
+            //go left if the value is smaller than the node we're at
+            
+            System.out.println("Delete From Left");
 
             curr.left = this.delete(curr.left, value);
-            curr = this.balance(curr);
 
-        } else if (value.compareTo(curr.data) > 0) { // val >= temp
+        } else if (value.compareTo(curr.data) > 0) {
+            //go right if the value is larger than the node we're at
+            
+            System.out.println("Delete From Right");
+
             curr.right = this.delete(curr.right, value);
-            curr = this.balance(curr);
-        }
 
-        return curr;
+        }
+        
+        //now update the height of the node
+        curr.height = Math.max(this.height(curr.left), this.height(curr.right))
+                + 1;
+        
+        //at this point the node should be removed
+        //however the node isn't balanced
+        
+        return this.balance(curr);
 
     }
+    
 
     /**
      * Performs balancing of the nodes if necessary. IMPLEMENT!
@@ -342,20 +284,29 @@ public class AVLtree<T extends Comparable<? super T>> {
      * @return the root node of the newly balanced subtree
      */
     private BNode balance(BNode curr) {
-        curr.height = max(this.height(curr.left), this.height(curr.right)) + 1;
+        
         int currFactor = this.balanceFactor(curr);
+        
         if (currFactor > 1) {
             int lFactor = this.balanceFactor(curr.left);
             if (lFactor >= 0) {
+                //Left Left Case
+                System.out.println("Left Left Case.");
                 curr = this.rotateWithLeftChild(curr);
             } else if (lFactor <= -1) {
+                //Left Right Case
+                System.out.println("Left Right Case.");
                 curr = this.doubleWithLeftChild(curr);
             }
         } else if (this.balanceFactor(curr) < -1) {
             int rFactor = this.balanceFactor(curr.right);
             if (rFactor <= 0) {
+                //Right Right Case
+                System.out.println("Right Right Case.");
                 curr = this.rotateWithRightChild(curr);
             } else if (rFactor >= 1) {
+                //Right Left Case
+                System.out.println("Right Left Case.");
                 curr = this.doubleWithRightChild(curr);
             }
         }
@@ -426,7 +377,8 @@ public class AVLtree<T extends Comparable<? super T>> {
             return true;
         }
         return this.isBalanced(curr.left) && this.isBalanced(curr.right)
-                && Math.abs(this.height(curr.left) - this.height(curr.right)) < 2;
+                && Math.abs(this.height(curr.left) - this.height(curr.right))
+                < 2;
     }
 
     /**
@@ -439,22 +391,6 @@ public class AVLtree<T extends Comparable<? super T>> {
     }
 
     /**
-     * Return maximum of lhs and rhs.
-     * 
-     * @param lhs
-     *            height of lhs
-     * @param rhs
-     *            height of rhs
-     * @return the int that's larger
-     */
-    private static int max(int lhs, int rhs) {
-        if (lhs > rhs) {
-            return lhs;
-        }
-        return rhs;
-    }
-
-    /**
      * Rotate binary tree node with left child. Update heights, then return new
      * root.
      * 
@@ -462,17 +398,22 @@ public class AVLtree<T extends Comparable<? super T>> {
      *            node to rotate
      * @return updated node
      */
-    @SuppressWarnings("static-access")
     private BNode rotateWithLeftChild(BNode k2) {
         if (k2 == null) {
             return null;
         }
         BNode k1 = k2.left;
         if (k1 != null) {
+            
+            //rotate
             k2.left = k1.right;
             k1.right = k2;
-            k2.height = this.max(this.height(k2.left), this.height(k2.right)) + 1;
-            k1.height = this.max(this.height(k1.left), k2.height) + 1;
+            
+            //update heights
+            k1.height = Math.max(this.height(k1.left), this.height(k1.right))
+                    + 1;
+            k2.height = Math.max(this.height(k2.left), this.height(k2.right))
+                    + 1;
         }
         return k1;
     }
@@ -493,8 +434,12 @@ public class AVLtree<T extends Comparable<? super T>> {
         if (k2 != null) {
             k1.right = k2.left;
             k2.left = k1;
-            k1.height = max(this.height(k1.left), this.height(k1.right)) + 1;
-            k2.height = max(this.height(k2.right), k1.height) + 1;
+            
+            //update heights
+            k1.height = Math.max(this.height(k1.left), this.height(k1.right))
+                    + 1;
+            k2.height = Math.max(this.height(k2.left), this.height(k2.right))
+                    + 1;
         }
         return k2;
     }
