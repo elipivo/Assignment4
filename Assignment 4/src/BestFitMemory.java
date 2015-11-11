@@ -310,4 +310,89 @@ public class BestFitMemory implements Memory {
         tmp.set(j, block);
     }
     
+    /*----ANALYSIS METHODS----*/
+    
+    /**
+     * Average time/size bucketsort.
+     * @return avg time BS.
+     */
+    public double getBSTime() {
+        if (this.totalSizeBucketsort == 0) {
+            return -1;
+        }
+        return this.timeBucketsort / this.totalSizeBucketsort;
+    }
+    
+    /**
+     * Average time/size quicksort.
+     * @return avg time QS.
+     */
+    public double getQSTime() {
+        if (this.totalSizeQuicksort == 0) {
+            return -1;
+        }
+        return this.timeQucksort / this.totalSizeQuicksort;
+    }
+    
+    /**
+     * Average time to process alloc.
+     * @return Average time.
+     */
+    public double getAvgTime() {
+        if (this.numAllocs == 0) {
+            return -1;
+        }
+        return this.allocTime / this.numAllocs;
+    }
+    
+    /**
+     * Size of failed allocation attempts.
+     * @return sizeFailedAllocs.
+     */
+    public int getFailedSize() {
+        return this.sizeFailedAllocs;
+    }
+    
+    
+    /**
+     * Number of failed allocation attempts.
+     * @return numFailedAllocs.
+     */
+    public int getFailedAllocs() {
+        return this.numFailedAllocs;
+    }
+    
+    /**
+     * Returns the Number of Defragmentations.
+     * @return defrag
+     */
+    public int getDefrag() {
+        return this.numDefrag;
+    }
+    
+    /**
+     * Returns filled memory.
+     * @return AL of filled mem.
+     */
+    public ArrayList<Block> getFilledMem() {
+        return this.filledMemory;
+    }
+    
+    /**
+     * Returns empty mem.
+     * @return AL of empty mem.
+     */
+    public ArrayList<Block> getEmptyMem() {
+        return this.emptyMemory.toArrayList();
+    }
+    
+    
+    /**
+     * Gets the metrics so far.
+     * @return ArrayList of metrics to be printed.
+     */
+    public ArrayList<Metric> getMetrics() {
+        return this.metrics;
+    }
+    
 }
