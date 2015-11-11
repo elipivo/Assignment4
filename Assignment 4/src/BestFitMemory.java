@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 
 /**
  * Interface Memory.java.
@@ -61,19 +62,150 @@ public class BestFitMemory implements Memory {
     
     @Override
     public int allocate(int size, int allocNum) {
-        // TODO Auto-generated method stub
-        return 0;
+        
+        final long startTime = System.currentTimeMillis();
+       
+        Metric metric = new Metric();
+        metric.setAlloc(true);
+        metric.setId(allocNum);
+        metric.setSizeReq(size);
+        this.numAllocs++;
+        
+        //get as small a block as possible
+        Block bestFit = this.emptyMemory.ceiling(new Block(-1, -1, size));
+        
+        if (bestFit != null) {
+            //cut block into filled part and empty part   
+            Block filledPart = 
+                    new Block(allocNum, bestFit.getMemAddress(), size);
+            filledPart.setFilled(true);
+            Block emptyPart = 
+                    new Block(-1, bestFit.getMemAddress() + size,
+                            bestFit.getSize() - size);
+            filledPart.setFilled(false);
+            
+            //add them to corresponding data structures
+            this.emptyMemory.add(emptyPart);
+            this.filledMemory.add(filledPart);
+            
+            //update metrics
+            metric.setSuccess(true);
+            metric.setDefrag(false);
+            metric.setAddress(filledPart.getMemAddress());
+            
+        } else {
+            //didn't work, defrag and try again
+            
+            this.defrag();
+            
+            //try again
+            bestFit = this.emptyMemory.ceiling(new Block(-1, -1, size));
+
+            if (bestFit != null) {
+                //cut block into filled part and empty part   
+                Block filledPart = 
+                        new Block(allocNum, bestFit.getMemAddress(), size);
+                filledPart.setFilled(true);
+                Block emptyPart = 
+                        new Block(-1, bestFit.getMemAddress() + size,
+                                bestFit.getSize() - size);
+                filledPart.setFilled(false);
+                
+                //add them to corresponding data structures
+                this.emptyMemory.add(emptyPart);
+                this.filledMemory.add(filledPart);
+                
+                //update metrics
+                metric.setSuccess(true);
+                metric.setDefrag(true);
+                metric.setAddress(filledPart.getMemAddress());
+                
+            } else {
+                //alloc failed
+                
+                //update metrics
+                metric.setSuccess(false);
+                metric.setDefrag(true);
+                metric.setAddress(-1);
+                
+            }
+            
+        }
+          
+        this.metrics.add(metric);
+        final long endTime = System.currentTimeMillis();
+        this.allocTime += endTime - startTime;
+        return metric.getAddress();
     }
 
     @Override
     public boolean deallocate(int allocNum) {
-        // TODO Auto-generated method stub
-        return false;
+        
+        Metric stat = new Metric();
+        stat.setAlloc(false);
+        
+        Block dealloc = null;
+        for (Block b : this.filledMemory) {
+            if (b.getAllocNum() == allocNum) {
+                dealloc = b;
+                this.filledMemory.remove(b);
+                break;
+            }
+        }
+        if (dealloc == null) {
+            stat.setAddress(-1);
+            stat.setDefrag(false);
+            stat.setId(allocNum);
+            stat.setSizeReq(-1);
+            stat.setSuccess(false);
+            this.metrics.add(stat);
+            return false;
+        }
+        //frees it
+        dealloc.setFilled(false);
+        this.emptyMemory.add(dealloc);
+        stat.setAddress(dealloc.getMemAddress());
+        stat.setDefrag(false);
+        stat.setId(dealloc.getAllocNum());
+        stat.setSizeReq(dealloc.getSize());
+        stat.setSuccess(true);
+        this.metrics.add(stat);
+        return true;
+       
     }
 
     @Override
     public void defrag() {
-        // TODO Auto-generated method stub
+        this.numDefrag++;
+        if (this.emptyMemory.size() == 0) {
+            return;
+        }
+        //timing sorts, only use one later.
+        ArrayList<Block> sorted = this.quickSort();
+        ArrayList<Block> bucketSort = this.bucketSort();
+        bucketSort.clear();
+        
+        //fix address calc.
+        for (int i = 0; i < sorted.size();) {
+            Block b = sorted.get(i);
+            int diff = -1;
+            if (i + 1 < sorted.size()) {
+                diff = b.getMemAddress() + b.getSize() 
+                    - sorted.get(i + 1).getMemAddress();
+            }
+            if (diff == 0) {
+                Block tmp = sorted.remove(i + 1);
+                Block good = sorted.get(i);
+                int newSize = tmp.getSize() + good.getSize();
+                int address = good.getMemAddress();
+                Block putIn = new Block(-1, address, newSize);
+                sorted.set(i, putIn);
+                i--;
+            }
+            i++;
+        }
+
+        this.emptyMemory = new AVLtree<Block>(sorted);
         
     }
 
@@ -147,12 +279,12 @@ public class BestFitMemory implements Memory {
         int j = hi + 1;
         Block v = tmp.get(lo);
         while (true) {
-            while (tmp.get(++i).getMemAddress().compareTo(v.getMemAddress()) < 0) {
+            while ((tmp.get(++i).getMemAddress() - v.getMemAddress()) < 0) {
                 if (i == hi) {
                     break;
                 }
             }
-            while (v.getMemAddress().compareTo(tmp.get(--j).getMemAddress()) < 0) {
+            while ((v.getMemAddress() - tmp.get(--j).getMemAddress()) < 0) {
                 if (j == lo) {
                     break;
                 }

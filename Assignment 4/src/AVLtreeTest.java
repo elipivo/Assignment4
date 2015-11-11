@@ -229,7 +229,6 @@ public class AVLtreeTest {
             assertEquals(i, testIter.next());
         }
         assertFalse(testIter.hasNext());
-        System.out.println(tree.preOrder().toString());
         assertTrue(tree.isBalanced()); //test the tree is balanced
         
         /* Forces Left-Right Case w/ Subtree Handling
@@ -281,12 +280,10 @@ public class AVLtreeTest {
         
         //remove each node from 15 to 1
         for (int i = 15; i > 0; i--) {
-            System.out.println(i);
             assertTrue(tree.remove(i));
             
             this.test.remove((Integer) i);
             Collections.sort(test);
-            System.out.println(tree.inOrder().toString());
             treeIter = tree.inOrder();
             testIter = test.iterator();
             for(Integer k : treeIter) { //test order is correct
@@ -312,14 +309,12 @@ public class AVLtreeTest {
 
         //remove each node from 1 to 15  
         for (int i = 1; i <= 15; i++) {
-            System.out.println(i);
             assertTrue(tree.remove(i));
             
             test.remove((Integer) i);
             Collections.sort(test);
             treeIter = tree.inOrder();
             testIter = test.iterator();
-            System.out.println(treeIter.toString());
             for(Integer k : treeIter) { //test order is correct
                 assertEquals(k, testIter.next());
             }
@@ -343,13 +338,10 @@ public class AVLtreeTest {
                 tree.add(n); 
                 test.add(n);
             }
-            System.out.println(tree.inOrder().toString());
-            System.out.println(i);
             assertTrue(tree.remove(i));
             test.remove((Integer) i);
             Collections.sort(test);
             treeIter = tree.inOrder();
-            System.out.println(treeIter.toString());
             testIter = test.iterator();
             for(Integer k : treeIter) { //test order is correct
                 assertEquals(k, testIter.next());

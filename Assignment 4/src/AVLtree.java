@@ -2,6 +2,7 @@
  * 600.226, Fall 2015
  * Starter code for AVLtree implementation
  */
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 
@@ -75,6 +76,20 @@ public class AVLtree<T extends Comparable<? super T>> {
         this.root = null;
         this.size = 0;
     }
+    
+    /**
+     * Constructs a Binary Search Tree from an ArrayList.
+     * @param list The ArrayList to construct the AVLTree from
+     */
+    public AVLtree(ArrayList<T> list) {
+        this.root = null;
+        this.size = 0;
+        
+        for (T entry : list) {
+            this.add(entry);
+        }
+    }
+    
 
     /**
      * Find out how many elements are in the Tree.
@@ -137,6 +152,53 @@ public class AVLtree<T extends Comparable<? super T>> {
             return this.contains(val, curr.left);
         }
         return this.contains(val, curr.right);
+    }
+    
+    /** Return the smallest value present that is greater than val.
+     * 
+     * @param val the value you want to ceiling
+     * @return the smallest value greater than val present in the tree
+     */
+    public T ceiling(T val) {
+
+        BNode ret = this.ceiling(val, this.root);
+        if (ret == null) {
+            return null;
+        } else {
+            return ret.data;
+        }
+        
+    }
+    
+    /** Returns the BNode containing the ceiling of val.
+     *  This is the smallest value present greater than val.
+     * 
+     * @param val the value to ceiling
+     * @param curr the current node
+     * @return the node containing the ceiling
+     */
+    private BNode ceiling(T val, BNode curr) {
+        
+        if (val == null || curr == null || this.isEmpty()) {
+            return null;
+        }
+        
+        if (val.equals(curr.data)) {
+            return curr;
+        } else if (val.compareTo(curr.data) > 0) {
+            
+            if (val.compareTo(curr.left.data) > 0) {
+                //the next one is closer!
+                return this.ceiling(val, curr.left);
+            } else {
+                //the next one would be too far
+                return curr;
+            }
+            
+        } else {
+            return null;
+        }
+        
     }
 
     /**
