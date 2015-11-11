@@ -110,6 +110,13 @@ public class ThresholdMemory implements Memory {
             // cut block into filled part and empty part
             while (bestFit.getSize() - aSize < this.threshold) {
                 bestFit = this.emptyMemory.ceiling(bestFit);
+                if(bestFit == null){
+                    //If it can't find something bigger than the block
+                    //that causes a less than threshold split
+                    //Just use the original block
+                    bestFit = this.emptyMemory.ceiling(new Block(-1,-1,aSize));
+                    break;
+                }
             }
             Block filledPart = 
                     new Block(allocNum, bestFit.getMemAddress(), aSize);
@@ -136,17 +143,26 @@ public class ThresholdMemory implements Memory {
             bestFit = this.emptyMemory.ceiling(new Block(-1, -1, aSize));
 
             if (bestFit != null) {
+                while (bestFit.getSize() - aSize < this.threshold) {
+                    bestFit = this.emptyMemory.ceiling(bestFit);
+                    if(bestFit == null){
+                        //If it can't find something bigger than the block
+                        //that causes a less than threshold split
+                        //Just use the original block
+                        bestFit = this.emptyMemory.ceiling(new Block(-1,-1,aSize));
+                        break;
+                    }
+                }
                 // cut block into filled part and empty part
                 Block filledPart = 
                         new Block(allocNum, bestFit.getMemAddress(), aSize);
                 filledPart.setFilled(true);
-                Block emptyPart = 
-                        new Block(-1, bestFit.getMemAddress() 
-                                + aSize, bestFit.getSize() - aSize);
+                bestFit.setSize(bestFit.getSize() - aSize);
+                bestFit.setMemAddress(bestFit.getMemAddress() + bestFit.getSize());
                 filledPart.setFilled(false);
 
                 // add them to corresponding data structures
-                this.emptyMemory.add(emptyPart);
+                this.emptyMemory.add(bestFit);
                 this.filledMemory.add(filledPart);
 
                 // update metrics
