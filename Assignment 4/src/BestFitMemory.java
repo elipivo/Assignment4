@@ -328,10 +328,10 @@ public class BestFitMemory implements Memory {
      * @return avg time QS.
      */
     public double getQSTime() {
-        if (this.totalSizeQuicksort == 0) {
+        if (this.totalSizeQuickSort == 0) {
             return -1;
         }
-        return this.timeQucksort / this.totalSizeQuicksort;
+        return this.timeQuickSort / this.totalSizeQuickSort;
     }
     
     /**
@@ -377,15 +377,6 @@ public class BestFitMemory implements Memory {
     public ArrayList<Block> getFilledMem() {
         return this.filledMemory;
     }
-    
-    /**
-     * Returns empty mem.
-     * @return AL of empty mem.
-     */
-    public ArrayList<Block> getEmptyMem() {
-        return this.emptyMemory.toArrayList();
-    }
-    
     
     /**
      * Gets the metrics so far.
