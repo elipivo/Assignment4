@@ -224,8 +224,6 @@ public class AVLtree<T extends Comparable<? super T>> {
         } else if (value.equals(curr.data)) {
             //carry out delete if equal
             
-            System.out.println("Delete Here.");
-
             if (curr.left == null && curr.right == null) {
                 //we're deleting a leaf
                 return null;
@@ -250,16 +248,12 @@ public class AVLtree<T extends Comparable<? super T>> {
 
         } else if (value.compareTo(curr.data) < 0) {
             //go left if the value is smaller than the node we're at
-            
-            System.out.println("Delete From Left");
 
             curr.left = this.delete(curr.left, value);
 
         } else if (value.compareTo(curr.data) > 0) {
             //go right if the value is larger than the node we're at
             
-            System.out.println("Delete From Right");
-
             curr.right = this.delete(curr.right, value);
 
         }
@@ -291,22 +285,18 @@ public class AVLtree<T extends Comparable<? super T>> {
             int lFactor = this.balanceFactor(curr.left);
             if (lFactor >= 0) {
                 //Left Left Case
-                System.out.println("Left Left Case.");
                 curr = this.rotateWithLeftChild(curr);
             } else if (lFactor <= -1) {
                 //Left Right Case
-                System.out.println("Left Right Case.");
                 curr = this.doubleWithLeftChild(curr);
             }
         } else if (this.balanceFactor(curr) < -1) {
             int rFactor = this.balanceFactor(curr.right);
             if (rFactor <= 0) {
                 //Right Right Case
-                System.out.println("Right Right Case.");
                 curr = this.rotateWithRightChild(curr);
             } else if (rFactor >= 1) {
                 //Right Left Case
-                System.out.println("Right Left Case.");
                 curr = this.doubleWithRightChild(curr);
             }
         }
