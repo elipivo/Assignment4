@@ -80,7 +80,6 @@ public class ThresholdMemory implements Memory {
         Block initialBlock = new Block(0, 0, this.size);
         this.emptyMemory.add(initialBlock);
         this.metrics = new ArrayList<Metric>();
-        this.size = 0;
         this.numDefrag = 0;
         this.numFailedAllocs = 0;
         this.sizeFailedAllocs = 0;
@@ -270,13 +269,15 @@ public class ThresholdMemory implements Memory {
         ArrayList<Block> sortedMemory = new ArrayList<Block>();
         
         Block[] memoryAddress = new Block[this.size];
-        
+
         for (Block b : this.emptyMemory.inOrder()) {
             memoryAddress[b.getMemAddress()] = b;
         }
         
         for (int i = 0; i < memoryAddress.length; i++) {
-            sortedMemory.add(memoryAddress[i]);
+            if (memoryAddress[i] != null) {
+                sortedMemory.add(memoryAddress[i]);
+            }
         }
         
         final long endTime = System.currentTimeMillis();
