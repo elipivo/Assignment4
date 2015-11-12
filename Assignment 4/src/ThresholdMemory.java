@@ -110,11 +110,12 @@ public class ThresholdMemory implements Memory {
             // cut block into filled part and empty part
             while (bestFit.getSize() - aSize < this.threshold) {
                 bestFit = this.emptyMemory.ceiling(bestFit);
-                if(bestFit == null){
+                if (bestFit == null) {
                     //If it can't find something bigger than the block
                     //that causes a less than threshold split
                     //Just use the original block
-                    bestFit = this.emptyMemory.ceiling(new Block(-1,-1,aSize));
+                    bestFit = 
+                            this.emptyMemory.ceiling(new Block(-1, -1, aSize));
                     break;
                 }
             }
@@ -145,11 +146,12 @@ public class ThresholdMemory implements Memory {
             if (bestFit != null) {
                 while (bestFit.getSize() - aSize < this.threshold) {
                     bestFit = this.emptyMemory.ceiling(bestFit);
-                    if(bestFit == null){
+                    if (bestFit == null) {
                         //If it can't find something bigger than the block
                         //that causes a less than threshold split
                         //Just use the original block
-                        bestFit = this.emptyMemory.ceiling(new Block(-1,-1,aSize));
+                        bestFit = this.emptyMemory.ceiling(
+                                new Block(-1, -1, aSize));
                         break;
                     }
                 }
@@ -158,7 +160,8 @@ public class ThresholdMemory implements Memory {
                         new Block(allocNum, bestFit.getMemAddress(), aSize);
                 filledPart.setFilled(true);
                 bestFit.setSize(bestFit.getSize() - aSize);
-                bestFit.setMemAddress(bestFit.getMemAddress() + bestFit.getSize());
+                bestFit.setMemAddress(bestFit.getMemAddress() 
+                        + bestFit.getSize());
                 filledPart.setFilled(false);
 
                 // add them to corresponding data structures
