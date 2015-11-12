@@ -41,7 +41,8 @@ public class MaxHeap<T extends Comparable<T>> {
     }
 
     /**
-     * Adds the val to the heap. The Percolates the value up if needed.
+     * Adds the val to the heap. 
+     * The Percolates the value up if needed.
      * 
      * @param val
      *            value to be added to heap.
@@ -59,7 +60,8 @@ public class MaxHeap<T extends Comparable<T>> {
     }
 
     /**
-     * Percolates the newly added value at index. and moves it into position
+     * Percolates the newly added value at index. 
+     * and moves it into position
      * within the heap.
      * 
      * @param index
@@ -200,9 +202,9 @@ public class MaxHeap<T extends Comparable<T>> {
      * @return ArrayList representation of heap.
      */
     public ArrayList<T> toArrayList() {
-    	return this.heap;
+        return this.heap;
     }
-    	
+    
     /**
      * Clear for testing.
      */
