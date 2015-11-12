@@ -185,9 +185,9 @@ public class AVLtree<T extends Comparable<? super T>> {
         
         if (val.equals(curr.data)) {
             return curr;
-        } else if (val.compareTo(curr.data) > 0) {
+        } else if (val.compareTo(curr.data) < 0) {
             
-            if (val.compareTo(curr.left.data) > 0) {
+            if (curr.left != null && val.compareTo(curr.left.data) < 0) {
                 //the next one is closer!
                 return this.ceiling(val, curr.left);
             } else {

@@ -122,7 +122,7 @@ public class ThresholdMemory implements Memory {
                     new Block(allocNum, bestFit.getMemAddress(), aSize);
             filledPart.setFilled(true);
             bestFit.setSize(bestFit.getSize() - aSize);
-            bestFit.setMemAddress(bestFit.getMemAddress() + bestFit.getSize());
+            bestFit.setMemAddress(bestFit.getMemAddress() + aSize);
             filledPart.setFilled(false);
 
             // add them to corresponding data structures
