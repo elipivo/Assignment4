@@ -384,7 +384,7 @@ public class WorstFitMemory implements Memory {
         if (this.numAllocs == 0) {
             return -1;
         }
-        return ((double) this.allocTime) / this.numAllocs;
+        return (((double) this.allocTime) / this.numAllocs) / 1000;
     }
     
     /**

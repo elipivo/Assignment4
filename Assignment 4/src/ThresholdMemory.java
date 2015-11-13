@@ -384,7 +384,7 @@ public class ThresholdMemory implements Memory {
         if (this.totalSizeBucketsort == 0) {
             return -1;
         }
-        return  (double) this.timeBucketSort / this.totalSizeBucketsort;
+        return  ((double) this.timeBucketSort / this.totalSizeBucketsort)/ 1000;
     }
 
     /**
@@ -396,7 +396,7 @@ public class ThresholdMemory implements Memory {
         if (this.totalSizeQuickSort == 0) {
             return -1;
         }
-        return (double) this.timeQuickSort / this.totalSizeQuickSort;
+        return ((double) this.timeQuickSort / this.totalSizeQuickSort) / 1000;
     }
 
     /**
@@ -408,7 +408,7 @@ public class ThresholdMemory implements Memory {
         if (this.numAllocs == 0) {
             return -1;
         }
-        return  (double) this.allocTime / this.numAllocs;
+        return (((double) this.allocTime) / this.numAllocs) / 1000;
     }
 
     /**

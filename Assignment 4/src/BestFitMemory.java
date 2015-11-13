@@ -325,29 +325,31 @@ public class BestFitMemory implements Memory {
         if (this.totalSizeBucketsort == 0) {
             return -1;
         }
-        return  (double) this.timeBucketsort / this.totalSizeBucketsort;
+        return  ((double) this.timeBucketsort / this.totalSizeBucketsort)/ 1000;
     }
-    
+
     /**
      * Average time/size quicksort.
+     * 
      * @return avg time QS.
      */
     public double getQSTime() {
         if (this.totalSizeQuickSort == 0) {
             return -1;
         }
-        return (double)  this.timeQuickSort / this.totalSizeQuickSort;
+        return ((double) this.timeQuickSort / this.totalSizeQuickSort) / 1000;
     }
-    
+
     /**
      * Average time to process alloc.
+     * 
      * @return Average time.
      */
     public double getAvgTime() {
         if (this.numAllocs == 0) {
             return -1;
         }
-        return (double) this.allocTime / this.numAllocs;
+        return (((double) this.allocTime) / this.numAllocs) / 1000;
     }
     
     /**
