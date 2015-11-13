@@ -59,19 +59,16 @@ public class WorstFitTest {
         mem = new WorstFitMemory(200);
         //all should be zero.
         //excpet these which are / 0;
-        boolean good = false;
-        try {
-            mem.getAvgTime();
-            mem.getQSTime();
-            mem.getBSTime();
-        } catch (ArithmeticException e) {
-            good = true;
-        }
-        //== 0
-        assertTrue(good);
+
+        //-1 means / by 0 to avoid exception.
+        assertEquals((int) mem.getAvgTime(), (int) -1);
+        assertEquals((int) mem.getQSTime(), (int) -1);
+        assertEquals((int) mem.getBSTime(), -1);
+
+
         assertTrue(mem.getDefrag() == 0);
         assertTrue(mem.getFailedAllocs() == 0);
-        assertTrue(mem.getFailedSize() == 0);
+        assertTrue(mem.getFailedSize() == -1);
                 
         
     }
@@ -84,7 +81,7 @@ public class WorstFitTest {
         int allocNum = 0;
         assertTrue(mem.getDefrag() == 0);
         assertTrue(mem.getFailedAllocs() == 0);
-        assertTrue(mem.getFailedSize() == 0);
+        assertTrue(mem.getFailedSize() == -1);
         assertTrue(mem.getEmptyMem().size() == 1);
         assertTrue(mem.getEmptyMem().get(0).getSize() == 200);
         assertTrue(mem.getFilledMem().size() == 0);
@@ -94,7 +91,7 @@ public class WorstFitTest {
         assertTrue(allocNum == 1);
         assertTrue(mem.getDefrag() == 0);
         assertTrue(mem.getFailedAllocs() == 0);
-        assertTrue(mem.getFailedSize() == 0);
+        assertTrue(mem.getFailedSize() == -1);
         assertTrue(mem.getEmptyMem().size() == 1);
         assertTrue(mem.getFilledMem().size() == 1);
         assertTrue(mem.getFilledMem().get(0).getSize() == 20);
@@ -105,7 +102,7 @@ public class WorstFitTest {
         assertTrue(allocNum == 2);
         assertTrue(mem.getDefrag() == 0);
         assertTrue(mem.getFailedAllocs() == 0);
-        assertTrue(mem.getFailedSize() == 0);
+        assertTrue(mem.getFailedSize() == -1);
         assertTrue(mem.getEmptyMem().size() == 1);
         assertTrue(mem.getFilledMem().size() == 2);
         assertTrue(mem.getFilledMem().get(0).getSize() == 20);
@@ -117,7 +114,7 @@ public class WorstFitTest {
         assertTrue(allocNum == 3);
         assertTrue(mem.getDefrag() == 0);
         assertTrue(mem.getFailedAllocs() == 0);
-        assertTrue(mem.getFailedSize() == 0);
+        assertTrue(mem.getFailedSize() == -1);
         assertTrue(mem.getEmptyMem().size() == 1);
         assertTrue(mem.getFilledMem().size() == 3);
         assertTrue(mem.getFilledMem().get(0).getSize() == 20);
@@ -130,7 +127,7 @@ public class WorstFitTest {
         assertTrue(allocNum == 4);
         assertTrue(mem.getDefrag() == 0);
         assertTrue(mem.getFailedAllocs() == 0);
-        assertTrue(mem.getFailedSize() == 0);
+        assertTrue(mem.getFailedSize() == -1);
         assertTrue(mem.getEmptyMem().size() == 1);
         assertTrue(mem.getFilledMem().size() == 4);
         assertTrue(mem.getFilledMem().get(0).getSize() == 20);
@@ -145,7 +142,7 @@ public class WorstFitTest {
         assertTrue(allocNum == 5);
         assertTrue(mem.getDefrag() == 0);
         assertTrue(mem.getFailedAllocs() == 0);
-        assertTrue(mem.getFailedSize() == 0);
+        assertTrue(mem.getFailedSize() == -1);
         assertTrue(mem.getEmptyMem().size() == 1);
         assertTrue(mem.getFilledMem().size() == 5);
         assertTrue(mem.getFilledMem().get(0).getSize() == 20);
@@ -160,7 +157,7 @@ public class WorstFitTest {
         assertTrue(allocNum == 6);
         assertTrue(mem.getDefrag() == 0);
         assertTrue(mem.getFailedAllocs() == 0);
-        assertTrue(mem.getFailedSize() == 0);
+        assertTrue(mem.getFailedSize() == -1);
         assertTrue(mem.getEmptyMem().size() == 1);
         assertTrue(mem.getFilledMem().size() == 6);
         assertTrue(mem.getFilledMem().get(0).getSize() == 20);
@@ -176,7 +173,7 @@ public class WorstFitTest {
         assertTrue(allocNum == 7);
         assertTrue(mem.getDefrag() == 0);
         assertTrue(mem.getFailedAllocs() == 0);
-        assertTrue(mem.getFailedSize() == 0);
+        assertTrue(mem.getFailedSize() == -1);
         assertTrue(mem.getEmptyMem().size() == 0);
         assertTrue(mem.getFilledMem().size() == 7);
         assertTrue(mem.getFilledMem().get(0).getSize() == 20);
@@ -191,7 +188,7 @@ public class WorstFitTest {
         //|20*|30*|30*|50*|20*|20*|30*|
         mem.allocate(50, ++allocNum);
         assertTrue(allocNum == 8);
-        assertTrue(mem.getDefrag() == 0);
+        assertTrue(mem.getDefrag() == 1);
         assertTrue(mem.getFailedAllocs() == 1);
         assertTrue(mem.getFailedSize() == 50);
         assertTrue(mem.getEmptyMem().size() == 0);
@@ -207,7 +204,7 @@ public class WorstFitTest {
         //dealloc
         //|20*|30*|30|50*|20*|20*|30*|
         assertTrue(mem.deallocate(3));
-        assertTrue(mem.getDefrag() == 0);
+        assertTrue(mem.getDefrag() == 1);
         assertTrue(mem.getFailedAllocs() == 1);
         assertTrue(mem.getFailedSize() == 50);
         assertTrue(mem.getEmptyMem().size() == 1);
@@ -223,7 +220,7 @@ public class WorstFitTest {
         //dealloc
         //|20*|30*|30|50*|20*|20|30*|
         assertTrue(mem.deallocate(6));
-        assertTrue(mem.getDefrag() == 0);
+        assertTrue(mem.getDefrag() == 1);
         assertTrue(mem.getFailedAllocs() == 1);
         assertTrue(mem.getFailedSize() == 50);
         assertTrue(mem.getEmptyMem().size() == 2);
@@ -240,7 +237,7 @@ public class WorstFitTest {
         //force defrag fail
         mem.allocate(50, ++allocNum);
         assertTrue(allocNum == 9);
-        assertTrue(mem.getDefrag() == 1);
+        assertTrue(mem.getDefrag() == 2);
         assertTrue(mem.getFailedAllocs() == 2);
         assertTrue(mem.getEmptyMem().size() == 2);
         assertTrue(mem.getFilledMem().size() == 5);
@@ -255,7 +252,7 @@ public class WorstFitTest {
         //|20*|30|30|50*|20*|20|30*|
         //dealloc to have 30 and 30 open.
         assertTrue(mem.deallocate(2));
-        assertTrue(mem.getDefrag() == 1);
+        assertTrue(mem.getDefrag() == 2);
         assertTrue(mem.getFailedAllocs() == 2);
         assertTrue(mem.getEmptyMem().size() == 3);
         assertTrue(mem.getFilledMem().size() == 4);
@@ -272,7 +269,7 @@ public class WorstFitTest {
         //50 added to end of arraylist.
         mem.allocate(50, ++allocNum);
         assertTrue(allocNum == 10);
-        assertTrue(mem.getDefrag() == 2);
+        assertTrue(mem.getDefrag() == 3);
         assertTrue(mem.getFailedAllocs() == 2);
         assertEquals(mem.getEmptyMem().size(), 2);
         assertTrue(mem.getFilledMem().size() == 5);
@@ -288,7 +285,7 @@ public class WorstFitTest {
         //|20*|50*|10|50|20*|20|30*|
         assertTrue(mem.deallocate(4));
         assertTrue(allocNum == 10);
-        assertTrue(mem.getDefrag() == 2);
+        assertTrue(mem.getDefrag() == 3);
         assertTrue(mem.getFailedAllocs() == 2);
         assertEquals(mem.getEmptyMem().size(), 3);
         assertTrue(mem.getFilledMem().size() == 4);
@@ -305,7 +302,7 @@ public class WorstFitTest {
         //alloc 8 THIS IS WHERE WORST FIT COMES IN.
         mem.allocate(8, ++allocNum);
         assertTrue(allocNum == 11);
-        assertTrue(mem.getDefrag() == 2);
+        assertTrue(mem.getDefrag() == 3);
         assertTrue(mem.getFailedAllocs() == 2);
         assertEquals(mem.getEmptyMem().size(), 3);
         assertTrue(mem.getFilledMem().size() == 5);
@@ -468,5 +465,175 @@ public class WorstFitTest {
     }
     
     
+    @Test
+    public void testDealloc() {
+        mem = new WorstFitMemory(200);
+        
+        //allocate 10 distinct blocks with size 20.
+        for (int i = 0; i < 10; i++) {
+            mem.allocate(20, i);
+        }
+        
+        //deallocate from back
+        int size = 0;
+        for (int i = 9; i > -1; i--) {
+            assertTrue(mem.deallocate(i));
+            assertEquals(mem.getEmptyMem().size(), ++size);
+            assertEquals(mem.getFilledMem().size() , i);
+        }
+        
+        assertTrue(mem.getFilledMem().size() == 0);
+        
+        //try dealloc when nothing there
+        for (int i = 0; i < 20; i++) {
+            assertFalse(mem.deallocate(i));
+            assertEquals(mem.getFilledMem().size(), 0);
+            assertEquals(mem.getEmptyMem().size(), 10);
+        }
+        
+        assertTrue(mem.getEmptyMem().size() == 10);
+        //manual defrag
+        mem.defrag();
+        assertTrue(mem.getEmptyMem().size() == 1);
+        
+        mem.allocate(100, 1);
+        mem.allocate(50, 2);
+        mem.allocate(50, 3);
+        //|100*|50*|50*|
+        assertEquals(mem.getEmptyMem().size(), 0);
+        assertEquals(mem.getFilledMem().size(), 3);
+        assertTrue(mem.deallocate(2));
+        assertEquals(mem.getEmptyMem().size(), 1);
+        assertEquals(mem.getFilledMem().size(), 2);
+        assertEquals(mem.getEmptyMem().get(0).getSize(), 50);
+        //now its |100*|50|50*|
+        
+        assertTrue(mem.deallocate(3));
+        //|100*|50|50|
+        assertEquals(mem.getEmptyMem().size(), 2);
+        assertEquals(mem.getFilledMem().size(), 1);
+        assertEquals(mem.getFilledMem().get(0).getSize(), 100);
+        assertEquals(mem.getEmptyMem().get(0).getSize(), 50);
+        assertEquals(mem.getEmptyMem().get(1).getSize(), 50);
+        mem.defrag();
+        //|100*|100|
+        assertEquals(mem.getFilledMem().get(0).getSize(), 100);
+        assertEquals(mem.getEmptyMem().get(0).getSize(), 100);
+        assertEquals(mem.getEmptyMem().size(), 1);
+        assertEquals(mem.getFilledMem().size(), 1);
+        
+        mem.allocate(20, 2);
+        //|100*|20*|80|
+        mem.allocate(50, 3);
+        //|100*|20*|50*|30|
+        assertTrue(mem.deallocate(1));
+        assertTrue(mem.deallocate(3));
+        //|100|20*|50|30|
+        assertEquals(mem.getEmptyMem().size(), 3);
+        assertEquals(mem.getFilledMem().size(), 1);
+        assertEquals(mem.getFilledMem().get(0).getSize(), 20);
+        assertEquals(mem.getEmptyMem().get(0).getSize(), 100);
+        assertEquals(mem.getEmptyMem().get(1).getSize(), 30);
+        assertEquals(mem.getEmptyMem().get(2).getSize(), 50);
+        
+        //worst fit testing w/in dealloc
+        mem.allocate(60, 4);
+        //|60*|40|20*|50|30|
+        assertEquals(mem.getEmptyMem().size(), 3);
+        assertEquals(mem.getFilledMem().size(), 2);
+        assertEquals(mem.getFilledMem().get(0).getSize(), 20);
+        assertEquals(mem.getFilledMem().get(1).getSize(), 60);
+        assertEquals(mem.getEmptyMem().get(0).getSize(), 50);
+        assertEquals(mem.getEmptyMem().get(1).getSize(), 30);
+        assertEquals(mem.getEmptyMem().get(2).getSize(), 40);
+        
+        //next alloc will break apart 50 block
+        mem.allocate(40, 5);
+        //|60*|40|20*|40*|10|30|
+        assertEquals(mem.getEmptyMem().size(), 3);
+        assertEquals(mem.getFilledMem().size(), 3);
+        assertEquals(mem.getFilledMem().get(0).getSize(), 20);
+        assertEquals(mem.getFilledMem().get(1).getSize(), 60);
+        assertEquals(mem.getFilledMem().get(2).getSize(), 40);
+        assertEquals(mem.getEmptyMem().get(0).getSize(), 40);
+        assertEquals(mem.getEmptyMem().get(1).getSize(), 30);
+        assertEquals(mem.getEmptyMem().get(2).getSize(), 10);
+        
+        assertTrue(mem.deallocate(5));
+        assertTrue(mem.deallocate(4));
+        assertTrue(mem.deallocate(2));
+        //|60|40|20|40|10|30|
+        assertEquals(mem.getEmptyMem().size(), 6);
+        assertEquals(mem.getFilledMem().size(), 0);
+        
+        mem.defrag();
+        //|200|
+        assertEquals(mem.getEmptyMem().size(), 1);
+        
+    }
+    
+    @Test
+    public void testDefrag() {
+        
+        mem = new WorstFitMemory(100);
+        
+        for (int i = 0; i < 5; i++) {
+            mem.allocate(20, i);
+        }
+        //|20*|20*|20*|20*|20*|
+        assertEquals(mem.getEmptyMem().size(), 0);
+        assertEquals(mem.getFilledMem().size(), 5);
+        
+        for (int i = 0; i < 5; i++) {
+            assertTrue(mem.getFilledMem().get(i).getSize() == 20);
+        }
+        
+        for (int i = 0; i < 5; i++) {
+            assertTrue(mem.deallocate(i));
+        }
+        
+        assertEquals(mem.getEmptyMem().size(), 5);
+        assertEquals(mem.getFilledMem().size(), 0);
+        //|20|20|20|20|20|
+        
+        mem.defrag();
+        //one block of size 100
+        assertEquals(mem.getEmptyMem().size(), 1);
+        assertEquals(mem.getEmptyMem().get(0).getSize(), 100);
+        
+        for (int i = 0; i < 5; i++) {
+            mem.allocate(20, i);
+        }
+        //|20*|20*|20*|20*|20*|
+        assertEquals(mem.getEmptyMem().size(), 0);
+        assertEquals(mem.getFilledMem().size(), 5);
+        for (int i = 0; i < 5; i++) {
+            assertTrue(mem.getFilledMem().get(i).getSize() == 20);
+        }
+        
+        assertTrue(mem.deallocate(0));
+        assertTrue(mem.deallocate(1));
+        assertTrue(mem.deallocate(3));
+        assertTrue(mem.deallocate(4));
+        assertEquals(mem.getEmptyMem().size(), 4);
+        assertEquals(mem.getFilledMem().size(), 1);
+        //|20|20|20*|20|20|
+        mem.defrag();
+        //|40|20*|40|
+        assertEquals(mem.getEmptyMem().size(), 2);
+        assertEquals(mem.getFilledMem().size(), 1);
+        assertEquals(mem.getFilledMem().get(0).getSize(), 20);
+        assertEquals(mem.getEmptyMem().get(0).getSize() ,40);
+        assertEquals(mem.getEmptyMem().get(1).getSize() ,40);
+        
+        assertTrue(mem.deallocate(2));
+        //|40|20|40|
+        mem.defrag();
+        //one block of size 100
+        //|100|
+        assertEquals(mem.getEmptyMem().size(), 1);
+        assertEquals(mem.getEmptyMem().get(0).getSize(), 100);
+        
+    }
     
 }
