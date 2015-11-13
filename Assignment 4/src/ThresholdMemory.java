@@ -19,6 +19,10 @@ public class ThresholdMemory implements Memory {
      */
     int size;
     /**
+     * The avg size of an allocation request
+     */
+    int avgSize;
+    /**
      * The threshold.
      */
     int threshold;
@@ -94,7 +98,7 @@ public class ThresholdMemory implements Memory {
     @Override
     public int allocate(int aSize, int allocNum) {
         final long startTime = System.nanoTime();
-
+        this.avgSize = (this.avgSize * numAllocs + aSize) / (numAllocs+1);
         Metric metric = new Metric();
         metric.setAlloc(true);
         metric.setId(allocNum);
@@ -144,6 +148,7 @@ public class ThresholdMemory implements Memory {
         this.metrics.add(metric);
         final long endTime = System.nanoTime();
         this.allocTime += endTime - startTime;
+        this.threshold = this.avgSize;
         return metric.getAddress();
     }
     /**
@@ -380,11 +385,11 @@ public class ThresholdMemory implements Memory {
      * 
      * @return avg time BS.
      */
-    public double getBSTime() {
+    public float getBSTime() {
         if (this.totalSizeBucketsort == 0) {
             return -1;
         }
-        return  ((double) this.timeBucketSort / this.totalSizeBucketsort)/ 1000;
+        return  ((float)this.timeBucketSort / this.totalSizeBucketsort)/ 1000;
     }
 
     /**
@@ -392,11 +397,11 @@ public class ThresholdMemory implements Memory {
      * 
      * @return avg time QS.
      */
-    public double getQSTime() {
+    public float getQSTime() {
         if (this.totalSizeQuickSort == 0) {
             return -1;
         }
-        return ((double) this.timeQuickSort / this.totalSizeQuickSort) / 1000;
+        return ((float) this.timeQuickSort / this.totalSizeQuickSort) / 1000;
     }
 
     /**
@@ -404,11 +409,11 @@ public class ThresholdMemory implements Memory {
      * 
      * @return Average time.
      */
-    public double getAvgTime() {
+    public float getAvgTime() {
         if (this.numAllocs == 0) {
             return -1;
         }
-        return (((double) this.allocTime) / this.numAllocs) / 1000;
+        return (((float) this.allocTime) / this.numAllocs) / 1000;
     }
 
     /**
@@ -416,8 +421,8 @@ public class ThresholdMemory implements Memory {
      * 
      * @return sizeFailedAllocs.
      */
-    public double getFailedSize() {
-        return (double) this.sizeFailedAllocs / this.numFailedAllocs;
+    public long getFailedSize() {
+        return (long) this.sizeFailedAllocs / this.numFailedAllocs;
     }
 
     /**
