@@ -189,42 +189,35 @@ public class AVLtree<T extends Comparable<? super T>> {
         if (val == null || curr == null || this.isEmpty()) {
             return null;
         }
-        // Can't use .equals because that actually compares the blocks, not size
-        //Check left first, if its greater move down
-        if (curr.left != null && curr.left.data.compareTo(val) >= 0) {
-            return this.ceiling(val, curr.left);
-            //Then check current. If greater or equal to,
-            //return that (because its the smallest its going to get)
-        } else if (curr.data.compareTo(val) >= 0) {
-            return curr;
-            //If the right is greater, move down.
-        } else if (curr.right != null && curr.right.data.compareTo(val) >= 0) {
-            return this.ceiling(val, curr.right);
-            //Otherwise everything is smaller than the 
-            //val, so there is nothing better. Ret null
+        
+        if (curr.data.compareTo(val) < 0) {
+            //we definitely need a bigger value, go right
+            
+            if (curr.right != null) {
+                return this.ceiling(val, curr.right);
+            } else {
+                //there aren't large enough
+                return null;
+            }
+            
+        } else if (curr.data.compareTo(val) > 0) {
+            //we might need a smaller value
+
+            //find the max of the smaller values
+            if (curr.left != null 
+                    && this.findMax(curr.left).data.compareTo(val) >= 0) {
+                //then the max of the smaller values is still big enough
+                //so go left
+                return this.ceiling(val, curr.left);
+            } else {
+                //its too smaller so return where we're at
+                return curr;
+            }
+ 
         } else {
-            return null;
+            //then we have just the right size
+            return curr;
         }
-        // } else if (val.compareTo(curr.data) < 0) {
-        //
-        // if (curr.left != null && val.compareTo(curr.left.data) < 0) {
-        // // the next one is closer!
-        // return this.ceiling(val, curr.left);
-        // } else {
-        // // the next one would be too far
-        // return curr;
-        // }
-        //
-        // } else if (val.compareTo(curr.data) > 0) {
-        //
-        // if (curr.left != null && val.compareTo(curr.left.data) < 0) {
-        // // the next one is closer!
-        // return this.ceiling(val, curr.left);
-        // } else {
-        // // the next one would be too far
-        // return null;
-        // }
-        // }
     }
 
     /**
@@ -422,6 +415,24 @@ public class AVLtree<T extends Comparable<? super T>> {
         }
         while (temp.left != null) {
             temp = temp.left;
+        }
+        return temp;
+    }
+    
+    /**
+     * Search from curr (as root of subtree) and find maximum value.
+     * 
+     * @param curr
+     *            the root of the tree
+     * @return the max
+     */
+    private BNode findMax(BNode curr) {
+        BNode temp = curr;
+        if (temp == null) {
+            return temp;
+        }
+        while (temp.right != null) {
+            temp = temp.right;
         }
         return temp;
     }

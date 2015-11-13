@@ -1,5 +1,6 @@
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
@@ -27,6 +28,39 @@ public class AVLtreeTest {
     public void setUp() {
         tree = new AVLtree<Integer>();
         test = new LinkedList<Integer>();
+    }
+    
+    @Test
+    public void testCeiling() {
+        
+        //build tree
+        
+        //ceiling on null
+        assertNull(this.tree.ceiling(3));
+        
+        /* Build Tree
+         *            15
+         *      /           \
+         *     7            23
+         *   /   \        /     \
+         *  3     11     19      27
+         * / \   / \    /  \    /  \
+         *1   5 9   13 17   21 25   29                
+         */
+        for (int i = 1; i < 30; i += 2) {
+            this.tree.add(i); 
+            this.test.add(i);
+        }
+        
+        for (int i = 1; i < 30; i += 2) {
+            assertTrue(i == tree.ceiling(i));
+        }
+        
+        for (int i = 0; i < 30; i += 2) {
+            assertTrue(i + 1 == tree.ceiling(i));
+        }
+        
+        
     }
     
     @Test

@@ -118,7 +118,7 @@ public class Block implements Comparable<Block> {
     }
 
     /**
-     * Compares to blocks by size.
+     * Compares two blocks by size.
      * 
      * @param b
      *            Block b to be compared with this.
