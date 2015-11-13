@@ -5,68 +5,71 @@ import java.util.ArrayList;
  * Pivo - epivo1 Raphael Norman-Tenazas - rtenaza1 William Watson - wwatso13
  */
 public class ThresholdMemory implements Memory {
-
+    /**
+     * Because screw checkstyle.
+     */
+    private static final int THOUSAND = 1000;
     /**
      * Tree holding memory.
      */
-    AVLtree<Block> emptyMemory;
+    private AVLtree<Block> emptyMemory;
     /**
      * Array holding filled memory.
      */
-    ArrayList<Block> filledMemory;
+    private ArrayList<Block> filledMemory;
     /**
      * Size of total memory.
      */
-    int size;
+    private int size;
     /**
-     * The avg size of an allocation request
+     * The avg size of an allocation request.
      */
-    int avgSize;
+    private int avgSize;
     /**
      * The threshold.
      */
-    int threshold;
+    private int threshold;
     /**
      * Array holding metrics.
      */
-    ArrayList<Metric> metrics;
+    private ArrayList<Metric> metrics;
     /**
      * Number of defragmentations.
      */
-    int numDefrag;
+    private int numDefrag;
     /**
      * Amount of failed allocations.
      */
-    int numFailedAllocs;
+    private int numFailedAllocs;
     /**
      * Total size of the failed allocations. Avg is calculated by dividing this
      * with the number of failed ones.
      */
-    int sizeFailedAllocs;
+    private int sizeFailedAllocs;
     /**
      * Amount of time it took to allocated something.
      */
-    long allocTime;
+    private long allocTime;
     /**
      * Amount of allocations.
      */
-    int numAllocs;
+    private int numAllocs;
     /**
      * Amount of time it took to quicksort (an increasing value).
      */
-    long timeQuickSort;
+    private long timeQuickSort;
     /**
      * Total size of all the quicksorts, used to calculated avg time.
      */
-    long totalSizeQuickSort;
+    private long totalSizeQuickSort;
     /**
      * Amount of time it took to bucketsort (an increasing value).
      */
-    long timeBucketSort;
+    private long timeBucketSort;
     /**
      * Total size of all the bucketsorts, used to calculated avg time.
      */
-    long totalSizeBucketsort;
+    private long totalSizeBucketsort;
 
     /**
      * Constructor.
@@ -78,7 +81,7 @@ public class ThresholdMemory implements Memory {
     public ThresholdMemory(int initalSize) {
         this.size = initalSize;
         this.emptyMemory = new AVLtree<Block>();
-        this.filledMemory = new ArrayList<Block>();
+        this.setFilledMemory(new ArrayList<Block>());
         Block initialBlock = new Block(0, 0, this.size);
         this.emptyMemory.add(initialBlock);
         this.metrics = new ArrayList<Metric>();
@@ -97,7 +100,8 @@ public class ThresholdMemory implements Memory {
     @Override
     public int allocate(int aSize, int allocNum) {
         final long startTime = System.nanoTime();
-        this.avgSize = (this.avgSize * numAllocs + aSize) / (numAllocs+1);
+        this.avgSize = (this.avgSize * this.numAllocs + aSize)
+                / (this.numAllocs + 1);
         Metric metric = new Metric();
         metric.setAlloc(true);
         metric.setId(allocNum);
@@ -187,7 +191,7 @@ public class ThresholdMemory implements Memory {
         if (bestFit.getSize() == 0) {
             this.emptyMemory.remove(bestFit);
         }
-        this.filledMemory.add(filledPart);
+        this.getFilledMemory().add(filledPart);
         return filledPart.getMemAddress();
 
     }
@@ -199,10 +203,10 @@ public class ThresholdMemory implements Memory {
         stat.setAlloc(false);
 
         Block dealloc = null;
-        for (Block b : this.filledMemory) {
+        for (Block b : this.getFilledMemory()) {
             if (b.getAllocNum() == allocNum) {
                 dealloc = b;
-                this.filledMemory.remove(b);
+                this.getFilledMemory().remove(b);
                 break;
             }
         }
@@ -243,7 +247,8 @@ public class ThresholdMemory implements Memory {
                 Block b = sorted.get(i);
                 int diff = -1;
                 if (i + 1 < sorted.size()) {
-                    diff = b.getMemAddress() + b.getSize() - sorted.get(i + 1).getMemAddress();
+                    diff = b.getMemAddress() + b.getSize() 
+                        - sorted.get(i + 1).getMemAddress();
                 }
                 if (diff == 0) {
                     Block tmp = sorted.remove(i + 1);
@@ -387,7 +392,8 @@ public class ThresholdMemory implements Memory {
         if (this.totalSizeBucketsort == 0) {
             return -1;
         }
-        return ((double) this.timeBucketsort) / this.totalSizeBucketsort /1000;
+        return ((double) this.timeBucketSort) 
+                / this.totalSizeBucketsort / THOUSAND;
     }
     
     /**
@@ -395,10 +401,11 @@ public class ThresholdMemory implements Memory {
      * @return avg time QS.
      */
     public double getQSTime() {
-        if (this.totalSizeQuicksort == 0) {
+        if (this.totalSizeQuickSort == 0) {
             return -1;
         }
-        return ((double) this.timeQuicksort) / this.totalSizeQuicksort /1000;
+        return ((double) this.timeQuickSort) 
+                / this.totalSizeQuickSort / THOUSAND;
     }
     
     /**
@@ -409,7 +416,7 @@ public class ThresholdMemory implements Memory {
         if (this.numAllocs == 0) {
             return -1;
         }
-        return (((double) this.allocTime) / this.numAllocs) / 1000;
+        return (((double) this.allocTime) / this.numAllocs) / THOUSAND;
     }
     
     /**
@@ -445,17 +452,9 @@ public class ThresholdMemory implements Memory {
      * @return AL of filled mem.
      */
     public ArrayList<Block> getFilledMem() {
-        return this.filledMemory;
+        return this.getFilledMemory();
     }
-    
-    /**
-     * Returns empty mem.
-     * @return AL of empty mem.
-     */
-    public ArrayList<Block> getEmptyMem() {
-        return this.emptyMemory.toArrayList();
-    }
-    
+
     
     /**
      * Gets the metrics so far.
@@ -463,6 +462,20 @@ public class ThresholdMemory implements Memory {
      */
     public ArrayList<Metric> getMetrics() {
         return this.metrics;
+    }
+
+    /**
+     * @return the filledMemory
+     */
+    public ArrayList<Block> getFilledMemory() {
+        return this.filledMemory;
+    }
+
+    /**
+     * @param afilledMemory the filledMemory to set
+     */
+    public void setFilledMemory(ArrayList<Block> afilledMemory) {
+        this.filledMemory = afilledMemory;
     }
     
 }
