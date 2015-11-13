@@ -73,10 +73,9 @@ public class ThresholdMemory implements Memory {
      * 
      * @param initalSize
      *            Initial size
-     * @param initialThreshold
-     *            Initial threshold
+
      */
-    public ThresholdMemory(int initalSize, int initialThreshold) {
+    public ThresholdMemory(int initalSize) {
         this.size = initalSize;
         this.emptyMemory = new AVLtree<Block>();
         this.filledMemory = new ArrayList<Block>();
@@ -92,7 +91,7 @@ public class ThresholdMemory implements Memory {
         this.timeQuickSort = 0;
         this.totalSizeBucketsort = 0;
         this.totalSizeQuickSort = 0;
-        this.threshold = initialThreshold;
+        this.threshold = 1;
     }
 
     @Override
@@ -378,87 +377,92 @@ public class ThresholdMemory implements Memory {
         tmp.set(j, block);
     }
 
-    /*----ANALYSIS METHODS----*/
-
+/*----ANALYSIS METHODS----*/
+    
     /**
      * Average time/size bucketsort.
-     * 
      * @return avg time BS.
      */
-    public float getBSTime() {
+    public double getBSTime() {
         if (this.totalSizeBucketsort == 0) {
             return -1;
         }
-        return  ((float)this.timeBucketSort / this.totalSizeBucketsort)/ 1000;
+        return ((double) this.timeBucketsort) / this.totalSizeBucketsort /1000;
     }
-
+    
     /**
      * Average time/size quicksort.
-     * 
      * @return avg time QS.
      */
-    public float getQSTime() {
-        if (this.totalSizeQuickSort == 0) {
+    public double getQSTime() {
+        if (this.totalSizeQuicksort == 0) {
             return -1;
         }
-        return ((float) this.timeQuickSort / this.totalSizeQuickSort) / 1000;
+        return ((double) this.timeQuicksort) / this.totalSizeQuicksort /1000;
     }
-
+    
     /**
      * Average time to process alloc.
-     * 
      * @return Average time.
      */
-    public float getAvgTime() {
+    public double getAvgTime() {
         if (this.numAllocs == 0) {
             return -1;
         }
-        return (((float) this.allocTime) / this.numAllocs) / 1000;
+        return (((double) this.allocTime) / this.numAllocs) / 1000;
     }
-
+    
     /**
      * Size of failed allocation attempts.
-     * 
      * @return sizeFailedAllocs.
      */
     public long getFailedSize() {
-        return (long) this.sizeFailedAllocs / this.numFailedAllocs;
+        if (this.numFailedAllocs == 0) {
+            return -1;
+        }
+        return ((long) this.sizeFailedAllocs) / this.numFailedAllocs;
     }
-
+    
+    
     /**
      * Number of failed allocation attempts.
-     * 
      * @return numFailedAllocs.
      */
     public int getFailedAllocs() {
         return this.numFailedAllocs;
     }
-
+    
     /**
      * Returns the Number of Defragmentations.
-     * 
      * @return defrag
      */
     public int getDefrag() {
         return this.numDefrag;
     }
-
+    
     /**
      * Returns filled memory.
-     * 
      * @return AL of filled mem.
      */
     public ArrayList<Block> getFilledMem() {
         return this.filledMemory;
     }
-
+    
+    /**
+     * Returns empty mem.
+     * @return AL of empty mem.
+     */
+    public ArrayList<Block> getEmptyMem() {
+        return this.emptyMemory.toArrayList();
+    }
+    
+    
     /**
      * Gets the metrics so far.
-     * 
      * @return ArrayList of metrics to be printed.
      */
     public ArrayList<Metric> getMetrics() {
         return this.metrics;
     }
-
+    
 }

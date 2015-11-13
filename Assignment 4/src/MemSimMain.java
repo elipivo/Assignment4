@@ -68,9 +68,7 @@ public final class MemSimMain {
         //make memory sims
         BestFitMemory bfm = new BestFitMemory(memSize);
         WorstFitMemory wfm = new WorstFitMemory(memSize);
-        //what is initial threshold?
-        final int twenty = 20;
-        ThresholdMemory tfm = new ThresholdMemory(memSize, twenty);
+        ThresholdMemory tfm = new ThresholdMemory(memSize);
         
         sims[0] = bfm;
         sims[1] = wfm;
