@@ -1,3 +1,14 @@
+/**
+ * AVLtreeTest.
+ * AVLtreeTest.java
+ * CS 600.226 Data Structures Fall 2015
+ * Assignment 4
+ * Eli Pivo - epivo1
+ * Raphael Norman-Tenazas - rtenaza1
+ * William Watson - wwatso13
+ */
+
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -10,12 +21,6 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-
-/* Elijah Pivo
- * epivo1
- * 600.226.01
- * Project 3
- */
 
 public class AVLtreeTest {
     
@@ -65,6 +70,21 @@ public class AVLtreeTest {
     
     @Test
     public void testAdd() {
+        
+        //temporary
+        AVLtree<Block> treeBlock = new AVLtree<Block>();
+        treeBlock.add(new Block(0, 0, 20));
+        treeBlock.add(new Block(0, 0, 30));
+        treeBlock.add(new Block(0, 0, 30));
+        treeBlock.remove(new Block(0, 0, 30));
+        treeBlock.remove(new Block(0, 0, 30));
+        treeBlock.add(new Block(0, 0, 10));
+        for (Block b : treeBlock.inOrder()) {
+            System.out.println(b);
+        }
+        
+        
+        
         
         /*
          *  50

@@ -1,8 +1,14 @@
-
 /**
- * 600.226, Fall 2015
- * Starter code for AVLtree implementation
+ * AVLtree.
+ * AVLtree.java
+ * CS 600.226 Data Structures Fall 2015
+ * Assignment 4
+ * Eli Pivo - epivo1
+ * Raphael Norman-Tenazas - rtenaza1
+ * William Watson - wwatso13
  */
+
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -260,7 +266,8 @@ public class AVLtree<T extends Comparable<? super T>> {
         }
 
         // update height for current node
-        curr.height = Math.max(this.height(curr.left), this.height(curr.right)) + 1;
+        curr.height = Math.max(this.height(curr.left), 
+                this.height(curr.right)) + 1;
 
         temp = this.balance(temp);
         return temp;
@@ -339,7 +346,8 @@ public class AVLtree<T extends Comparable<? super T>> {
         }
 
         // now update the height of the node
-        curr.height = Math.max(this.height(curr.left), this.height(curr.right)) + 1;
+        curr.height = Math.max(this.height(curr.left), 
+                this.height(curr.right)) + 1;
 
         // at this point the node should be removed
         // however the node isn't balanced

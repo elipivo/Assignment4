@@ -1,3 +1,13 @@
+/**
+ * BestFitMemory.
+ * BesrtFitMemory.java
+ * CS 600.226 Data Structures Fall 2015
+ * Assignment 4
+ * Eli Pivo - epivo1
+ * Raphael Norman-Tenazas - rtenaza1
+ * William Watson - wwatso13
+ */
+
 import java.util.ArrayList;
 
 
@@ -245,7 +255,9 @@ public class BestFitMemory implements Memory {
         }
         
         for (int i = 0; i < memoryAddress.length; i++) {
-            sortedMemory.add(memoryAddress[i]);
+            if (memoryAddress[i] != null) {
+                sortedMemory.add(memoryAddress[i]);
+            }
         }
         
         final long endTime = System.nanoTime();
@@ -343,7 +355,9 @@ public class BestFitMemory implements Memory {
         if (this.totalSizeBucketsort == 0) {
             return -1;
         }
-        return  ((float)this.timeBucketsort / this.totalSizeBucketsort)/ 1000;
+        final int convert = 1000;
+        return  ((float) this.timeBucketsort 
+                / this.totalSizeBucketsort) / convert;
     }
 
     /**
@@ -355,7 +369,8 @@ public class BestFitMemory implements Memory {
         if (this.totalSizeQuickSort == 0) {
             return -1;
         }
-        return ((float) this.timeQuickSort / this.totalSizeQuickSort) / 1000;
+        final int convert = 1000;
+        return ((float) this.timeQuickSort / this.totalSizeQuickSort) / convert;
     }
 
     /**
@@ -367,7 +382,9 @@ public class BestFitMemory implements Memory {
         if (this.numAllocs == 0) {
             return -1;
         }
-        return (((float) this.allocTime) / this.numAllocs) / 1000;
+        
+        final int convert = 1000;
+        return (((float) this.allocTime) / this.numAllocs) / convert;
     }
 
     /**
@@ -376,7 +393,10 @@ public class BestFitMemory implements Memory {
      * @return sizeFailedAllocs.
      */
     public long getFailedSize() {
-        return (long) this.sizeFailedAllocs / this.numFailedAllocs;
+        if (this.numFailedAllocs == 0) {
+            return -1;
+        }
+        return ((long) this.sizeFailedAllocs) / this.numFailedAllocs;
     }
 
     /**
@@ -405,6 +425,15 @@ public class BestFitMemory implements Memory {
     public ArrayList<Block> getFilledMem() {
         return this.filledMemory;
     }
+    
+    /**
+     * Returns empty memory.
+     * 
+     * @return AL of filled mem.
+     */
+    public AVLtree<Block> getEmptyMem() {
+        return this.emptyMemory;
+    }
 
     /**
      * Gets the metrics so far.
@@ -414,4 +443,7 @@ public class BestFitMemory implements Memory {
     public ArrayList<Metric> getMetrics() {
         return this.metrics;
     }
+    
+    
+    
 }
