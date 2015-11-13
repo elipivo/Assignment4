@@ -114,7 +114,7 @@ public class ThresholdMemory implements Memory {
 
         } else {
             // didn't work, defrag and try again
-            System.out.println("Defrag! " + aSize);
+            
             this.defrag();
 
             // try again
@@ -159,14 +159,14 @@ public class ThresholdMemory implements Memory {
      */
     private int alloc(Block bestFit, int aSize, int allocNum) {
         int thresh = bestFit.getSize() - aSize;
-        System.out.println(thresh);
+        
         while (thresh < this.threshold && thresh != 0) {
             bestFit = this.emptyMemory.ceiling(bestFit);
             if (bestFit == null || bestFit.getSize() == thresh + aSize) {
                 // If it can't find something bigger than the block
                 // that causes a less than threshold split
                 // Just use the original block
-                System.out.println("Using original");
+                
                 bestFit = this.emptyMemory.ceiling(new Block(-1, -1, aSize));
                 break;
             }
@@ -179,7 +179,7 @@ public class ThresholdMemory implements Memory {
         filledPart.setFilled(false);
 
         // add them to corresponding data structures
-        System.out.println(this.emptyMemory.inOrder());
+        
         if (bestFit.getSize() == 0) {
             this.emptyMemory.remove(bestFit);
         }

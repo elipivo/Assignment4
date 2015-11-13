@@ -82,7 +82,7 @@ public class BestFitMemory implements Memory {
 
         } else {
             // didn't work, defrag and try again
-            System.out.println("Defrag! " + aSize);
+            
             this.defrag();
 
             // try again
@@ -134,7 +134,7 @@ public class BestFitMemory implements Memory {
         filledPart.setFilled(false);
 
         // add them to corresponding data structures
-        System.out.println(this.emptyMemory.inOrder());
+        
         if (bestFit.getSize() == 0) {
             this.emptyMemory.remove(bestFit);
         }
