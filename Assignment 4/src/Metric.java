@@ -12,7 +12,7 @@ public class Metric {
     private boolean alloc;
     /** id number. */
     private int id;
-    /** Was this a defrag. */
+    /** Was there a defrag. */
     private boolean defrag;
     /** Was this successful. */
     private boolean success;
