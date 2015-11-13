@@ -58,13 +58,13 @@ public final class GenerateRequests {
         
         outputFile.write("A 1\n");
         outputFile.write("D 100000\n");
-        outputFile.write("A 1");
+        outputFile.write("A 1\n");
         outputFile.write("D 99999\n");
         outputFile.write("D 100002\n");
         outputFile.write("D 99986\nD 99987\nD 99988\n"
-                + "D 99989\nD 99990");
+                + "D 99989\nD 99990\n");
         outputFile.write("D 99992\nD 99993\nD 99994\n"
-                + "D 99995\nD 99996\nD 99997");
+                + "D 99995\nD 99996\nD 99997\n");
         outputFile.write("A 5\n");
         outputFile.write("A 6\n");
         
