@@ -13,6 +13,9 @@ public class ThresholdMemory implements Memory {
      * Tree holding memory.
      */
     private AVLtree<Block> emptyMemory;
+    
+    
+
     /**
      * Array holding filled memory.
      */
@@ -70,7 +73,6 @@ public class ThresholdMemory implements Memory {
      * Total size of all the bucketsorts, used to calculated avg time.
      */
     private long totalSizeBucketsort;
-
     /**
      * Constructor.
      * 
@@ -96,6 +98,97 @@ public class ThresholdMemory implements Memory {
         this.totalSizeQuickSort = 0;
         this.threshold = 1;
     }
+    /**
+     * @return the emptyMemory
+     */
+    public AVLtree<Block> getEmptyMemory() {
+        return this.emptyMemory;
+    }
+
+    /**
+     * @return the size
+     */
+    public int getSize() {
+        return this.size;
+    }
+
+    /**
+     * @return the avgSize
+     */
+    public int getAvgSize() {
+        return this.avgSize;
+    }
+
+    /**
+     * @return the threshold
+     */
+    public int getThreshold() {
+        return this.threshold;
+    }
+
+    /**
+     * @return the numDefrag
+     */
+    public int getNumDefrag() {
+        return this.numDefrag;
+    }
+
+    /**
+     * @return the numFailedAllocs
+     */
+    public int getNumFailedAllocs() {
+        return this.numFailedAllocs;
+    }
+
+    /**
+     * @return the sizeFailedAllocs
+     */
+    public int getSizeFailedAllocs() {
+        return this.sizeFailedAllocs;
+    }
+
+    /**
+     * @return the allocTime
+     */
+    public long getAllocTime() {
+        return this.allocTime;
+    }
+
+    /**
+     * @return the numAllocs
+     */
+    public int getNumAllocs() {
+        return this.numAllocs;
+    }
+
+    /**
+     * @return the timeQuickSort
+     */
+    public long getTimeQuickSort() {
+        return this.timeQuickSort;
+    }
+
+    /**
+     * @return the totalSizeQuickSort
+     */
+    public long getTotalSizeQuickSort() {
+        return this.totalSizeQuickSort;
+    }
+
+    /**
+     * @return the timeBucketSort
+     */
+    public long getTimeBucketSort() {
+        return this.timeBucketSort;
+    }
+
+    /**
+     * @return the totalSizeBucketsort
+     */
+    public long getTotalSizeBucketsort() {
+        return this.totalSizeBucketsort;
+    }
+   
 
     @Override
     public int allocate(int aSize, int allocNum) {
