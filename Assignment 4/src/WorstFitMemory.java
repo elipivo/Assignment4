@@ -362,7 +362,7 @@ public class WorstFitMemory implements Memory {
         if (this.totalSizeBucketsort == 0) {
             return -1;
         }
-        return ((double) this.timeBucketsort) / this.totalSizeBucketsort;
+        return ((double) this.timeBucketsort) / this.totalSizeBucketsort /1000;
     }
     
     /**
@@ -373,7 +373,7 @@ public class WorstFitMemory implements Memory {
         if (this.totalSizeQuicksort == 0) {
             return -1;
         }
-        return ((double) this.timeQuicksort) / this.totalSizeQuicksort;
+        return ((double) this.timeQuicksort) / this.totalSizeQuicksort /1000;
     }
     
     /**

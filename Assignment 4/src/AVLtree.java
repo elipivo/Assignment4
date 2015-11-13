@@ -1,3 +1,4 @@
+
 /**
  * 600.226, Fall 2015
  * Starter code for AVLtree implementation
@@ -76,20 +77,21 @@ public class AVLtree<T extends Comparable<? super T>> {
         this.root = null;
         this.size = 0;
     }
-    
+
     /**
      * Constructs a Binary Search Tree from an ArrayList.
-     * @param list The ArrayList to construct the AVLTree from
+     * 
+     * @param list
+     *            The ArrayList to construct the AVLTree from
      */
     public AVLtree(ArrayList<T> list) {
         this.root = null;
         this.size = 0;
-        
+
         for (T entry : list) {
             this.add(entry);
         }
     }
-    
 
     /**
      * Find out how many elements are in the Tree.
@@ -153,10 +155,12 @@ public class AVLtree<T extends Comparable<? super T>> {
         }
         return this.contains(val, curr.right);
     }
-    
-    /** Return the smallest value present that is greater than val.
+
+    /**
+     * Return the smallest value present that is greater than val.
      * 
-     * @param val the value you want to ceiling
+     * @param val
+     *            the value you want to ceiling
      * @return the smallest value greater than val present in the tree
      */
     public T ceiling(T val) {
@@ -167,38 +171,60 @@ public class AVLtree<T extends Comparable<? super T>> {
         } else {
             return ret.data;
         }
-        
+
     }
-    
-    /** Returns the BNode containing the ceiling of val.
-     *  This is the smallest value present greater than val.
+
+    /**
+     * Returns the BNode containing the ceiling of val. This is the smallest
+     * value present greater than val.
      * 
-     * @param val the value to ceiling
-     * @param curr the current node
+     * @param val
+     *            the value to ceiling
+     * @param curr
+     *            the current node
      * @return the node containing the ceiling
      */
     private BNode ceiling(T val, BNode curr) {
-        
+
         if (val == null || curr == null || this.isEmpty()) {
             return null;
         }
-        //Can't use .equals because that actually compares the blocks, not size
-        if (val.compareTo(curr.data) == 0) {
+        // Can't use .equals because that actually compares the blocks, not size
+        //Check left first, if its greater move down
+        if (curr.left != null && curr.left.data.compareTo(val) >= 0) {
+            return this.ceiling(val, curr.left);
+            //Then check current. If greater or equal to,
+            //return that (because its the smallest its going to get)
+        } else if (curr.data.compareTo(val) >= 0) {
             return curr;
-        } else if (val.compareTo(curr.data) < 0) {
-            
-            if (curr.left != null && val.compareTo(curr.left.data) < 0) {
-                //the next one is closer!
-                return this.ceiling(val, curr.left);
-            } else {
-                //the next one would be too far
-                return curr;
-            }
-            
+            //If the right is greater, move down.
+        } else if (curr.right != null && curr.right.data.compareTo(val) >= 0) {
+            return this.ceiling(val, curr.right);
+            //Otherwise everything is smaller than the 
+            //val, so there is nothing better. Ret null
         } else {
             return null;
         }
-        
+        // } else if (val.compareTo(curr.data) < 0) {
+        //
+        // if (curr.left != null && val.compareTo(curr.left.data) < 0) {
+        // // the next one is closer!
+        // return this.ceiling(val, curr.left);
+        // } else {
+        // // the next one would be too far
+        // return curr;
+        // }
+        //
+        // } else if (val.compareTo(curr.data) > 0) {
+        //
+        // if (curr.left != null && val.compareTo(curr.left.data) < 0) {
+        // // the next one is closer!
+        // return this.ceiling(val, curr.left);
+        // } else {
+        // // the next one would be too far
+        // return null;
+        // }
+        // }
     }
 
     /**
@@ -239,11 +265,10 @@ public class AVLtree<T extends Comparable<? super T>> {
         } else { // val >= temp
             temp.right = this.insert(val, temp.right);
         }
-        
-        //update height for current node
-        curr.height = Math.max(this.height(curr.left), this.height(curr.right))
-                + 1;
-        
+
+        // update height for current node
+        curr.height = Math.max(this.height(curr.left), this.height(curr.right)) + 1;
+
         temp = this.balance(temp);
         return temp;
     }
@@ -265,72 +290,70 @@ public class AVLtree<T extends Comparable<? super T>> {
         }
         return false;
     }
-    
-    /**
-   * Helper delete method. - This does the real work - IMPLEMENT!
-   * 
-   * @param value
-   *            the value to delete
-   * @param curr
-   *            the root of the subtree to look in
-   * @return the new subtree after rebalancing
-   */
-    private BNode delete(BNode curr, T value) {
-        //go to the node that needs to be deleted
 
-        if (curr == null) { //should I include || value == null?
-            //if curr is empty or value is empty just return curr unchanged
+    /**
+     * Helper delete method. - This does the real work - IMPLEMENT!
+     * 
+     * @param value
+     *            the value to delete
+     * @param curr
+     *            the root of the subtree to look in
+     * @return the new subtree after rebalancing
+     */
+    private BNode delete(BNode curr, T value) {
+        // go to the node that needs to be deleted
+
+        if (curr == null) { // should I include || value == null?
+            // if curr is empty or value is empty just return curr unchanged
 
             return curr;
 
         } else if (value.equals(curr.data)) {
-            //carry out delete if equal
-            
+            // carry out delete if equal
+
             if (curr.left == null && curr.right == null) {
-                //we're deleting a leaf
+                // we're deleting a leaf
                 return null;
-                
-            }  else if (curr.left != null && curr.right != null) {
-                //we're deleting something with two children
-                
-                //replace with the in order successor
+
+            } else if (curr.left != null && curr.right != null) {
+                // we're deleting something with two children
+
+                // replace with the in order successor
                 curr.data = this.findMin(curr.right).data;
-                
-                //delete the in order successor
+
+                // delete the in order successor
                 curr.right = this.delete(curr.right, curr.data);
-                
+
             } else if (curr.left != null) {
-                //we're deleting something with only a left child  
+                // we're deleting something with only a left child
                 return curr.left;
-                
+
             } else {
-                //we're deleting something with only a right child
-                return curr.right;   
+                // we're deleting something with only a right child
+                return curr.right;
             }
 
         } else if (value.compareTo(curr.data) < 0) {
-            //go left if the value is smaller than the node we're at
+            // go left if the value is smaller than the node we're at
 
             curr.left = this.delete(curr.left, value);
 
         } else if (value.compareTo(curr.data) > 0) {
-            //go right if the value is larger than the node we're at
-            
+            // go right if the value is larger than the node we're at
+
             curr.right = this.delete(curr.right, value);
 
         }
-        
-        //now update the height of the node
-        curr.height = Math.max(this.height(curr.left), this.height(curr.right))
-                + 1;
-        
-        //at this point the node should be removed
-        //however the node isn't balanced
-        
+
+        // now update the height of the node
+        curr.height = Math.max(this.height(curr.left), this.height(curr.right)) + 1;
+
+        // at this point the node should be removed
+        // however the node isn't balanced
+
         return this.balance(curr);
 
     }
-    
 
     /**
      * Performs balancing of the nodes if necessary. IMPLEMENT!
@@ -340,25 +363,25 @@ public class AVLtree<T extends Comparable<? super T>> {
      * @return the root node of the newly balanced subtree
      */
     private BNode balance(BNode curr) {
-        
+
         int currFactor = this.balanceFactor(curr);
-        
+
         if (currFactor > 1) {
             int lFactor = this.balanceFactor(curr.left);
             if (lFactor >= 0) {
-                //Left Left Case
+                // Left Left Case
                 curr = this.rotateWithLeftChild(curr);
             } else if (lFactor <= -1) {
-                //Left Right Case
+                // Left Right Case
                 curr = this.doubleWithLeftChild(curr);
             }
         } else if (this.balanceFactor(curr) < -1) {
             int rFactor = this.balanceFactor(curr.right);
             if (rFactor <= 0) {
-                //Right Right Case
+                // Right Right Case
                 curr = this.rotateWithRightChild(curr);
             } else if (rFactor >= 1) {
-                //Right Left Case
+                // Right Left Case
                 curr = this.doubleWithRightChild(curr);
             }
         }
@@ -429,8 +452,7 @@ public class AVLtree<T extends Comparable<? super T>> {
             return true;
         }
         return this.isBalanced(curr.left) && this.isBalanced(curr.right)
-                && Math.abs(this.height(curr.left) - this.height(curr.right))
-                < 2;
+                && Math.abs(this.height(curr.left) - this.height(curr.right)) < 2;
     }
 
     /**
@@ -456,16 +478,14 @@ public class AVLtree<T extends Comparable<? super T>> {
         }
         BNode k1 = k2.left;
         if (k1 != null) {
-            
-            //rotate
+
+            // rotate
             k2.left = k1.right;
             k1.right = k2;
-            
-            //update heights
-            k1.height = Math.max(this.height(k1.left), this.height(k1.right))
-                    + 1;
-            k2.height = Math.max(this.height(k2.left), this.height(k2.right))
-                    + 1;
+
+            // update heights
+            k1.height = Math.max(this.height(k1.left), this.height(k1.right)) + 1;
+            k2.height = Math.max(this.height(k2.left), this.height(k2.right)) + 1;
         }
         return k1;
     }
@@ -486,12 +506,10 @@ public class AVLtree<T extends Comparable<? super T>> {
         if (k2 != null) {
             k1.right = k2.left;
             k2.left = k1;
-            
-            //update heights
-            k1.height = Math.max(this.height(k1.left), this.height(k1.right))
-                    + 1;
-            k2.height = Math.max(this.height(k2.left), this.height(k2.right))
-                    + 1;
+
+            // update heights
+            k1.height = Math.max(this.height(k1.left), this.height(k1.right)) + 1;
+            k2.height = Math.max(this.height(k2.left), this.height(k2.right)) + 1;
         }
         return k2;
     }
