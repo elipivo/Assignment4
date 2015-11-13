@@ -182,8 +182,8 @@ public class AVLtree<T extends Comparable<? super T>> {
         if (val == null || curr == null || this.isEmpty()) {
             return null;
         }
-        
-        if (val.equals(curr.data)) {
+        //Can't use .equals because that actually compares the blocks, not size
+        if (val.compareTo(curr.data) == 0) {
             return curr;
         } else if (val.compareTo(curr.data) < 0) {
             

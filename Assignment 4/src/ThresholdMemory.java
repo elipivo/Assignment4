@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 
-
 /**
  * Interface Memory.java. CS 600.226 Data Structures Fall 2015 Assignment 4 Eli
  * Pivo - epivo1 Raphael Norman-Tenazas - rtenaza1 William Watson - wwatso13
@@ -107,70 +106,27 @@ public class ThresholdMemory implements Memory {
 
         if (bestFit != null) {
             // cut block into filled part and empty part
-            while (bestFit.getSize() - aSize < this.threshold) {
-                bestFit = this.emptyMemory.ceiling(bestFit);
-                if (bestFit == null) {
-                    //If it can't find something bigger than the block
-                    //that causes a less than threshold split
-                    //Just use the original block
-                    bestFit = 
-                            this.emptyMemory.ceiling(new Block(-1, -1, aSize));
-                    break;
-                }
-            }
-            Block filledPart = 
-                    new Block(allocNum, bestFit.getMemAddress(), aSize);
-            filledPart.setFilled(true);
-            bestFit.setSize(bestFit.getSize() - aSize);
-            bestFit.setMemAddress(bestFit.getMemAddress() + aSize);
-            filledPart.setFilled(false);
-
-            // add them to corresponding data structures
-            this.emptyMemory.add(bestFit);
-            this.filledMemory.add(filledPart);
-
             // update metrics
+            int add = this.alloc(bestFit, aSize, allocNum);
             metric.setSuccess(true);
             metric.setDefrag(false);
-            metric.setAddress(filledPart.getMemAddress());
+            metric.setAddress(add);
 
         } else {
             // didn't work, defrag and try again
-
+            System.out.println("Defrag! " + aSize);
             this.defrag();
 
             // try again
             bestFit = this.emptyMemory.ceiling(new Block(-1, -1, aSize));
 
             if (bestFit != null) {
-                while (bestFit.getSize() - aSize < this.threshold) {
-                    bestFit = this.emptyMemory.ceiling(bestFit);
-                    if (bestFit == null) {
-                        //If it can't find something bigger than the block
-                        //that causes a less than threshold split
-                        //Just use the original block
-                        bestFit = this.emptyMemory.ceiling(
-                                new Block(-1, -1, aSize));
-                        break;
-                    }
-                }
-                // cut block into filled part and empty part
-                Block filledPart = 
-                        new Block(allocNum, bestFit.getMemAddress(), aSize);
-                filledPart.setFilled(true);
-                bestFit.setSize(bestFit.getSize() - aSize);
-                bestFit.setMemAddress(bestFit.getMemAddress() 
-                        + bestFit.getSize());
-                filledPart.setFilled(false);
-
-                // add them to corresponding data structures
-                this.emptyMemory.add(bestFit);
-                this.filledMemory.add(filledPart);
+                int add = this.alloc(bestFit, aSize, allocNum);
 
                 // update metrics
                 metric.setSuccess(true);
                 metric.setDefrag(true);
-                metric.setAddress(filledPart.getMemAddress());
+                metric.setAddress(add);
 
             } else {
                 // alloc failed
@@ -189,13 +145,54 @@ public class ThresholdMemory implements Memory {
         this.allocTime += endTime - startTime;
         return metric.getAddress();
     }
+    /**
+     * Helper method so that allocate didn't do things twice.
+     * @param bestFit
+     * Best fit block
+     * @param aSize
+     * Allocation size
+     * @param allocNum
+     * Allocation number
+     * @return
+     * Memory address
+     */
+    private int alloc(Block bestFit, int aSize, int allocNum) {
+        int thresh = bestFit.getSize() - aSize;
+        System.out.println(thresh);
+        while (thresh < this.threshold && thresh != 0) {
+            bestFit = this.emptyMemory.ceiling(bestFit);
+            if (bestFit == null || bestFit.getSize() == thresh + aSize) {
+                // If it can't find something bigger than the block
+                // that causes a less than threshold split
+                // Just use the original block
+                System.out.println("Using original");
+                bestFit = this.emptyMemory.ceiling(new Block(-1, -1, aSize));
+                break;
+            }
+            thresh = bestFit.getSize() - aSize;
+        }
+        Block filledPart = new Block(allocNum, bestFit.getMemAddress(), aSize);
+        filledPart.setFilled(true);
+        bestFit.setSize(bestFit.getSize() - aSize);
+        bestFit.setMemAddress(bestFit.getMemAddress() + aSize);
+        filledPart.setFilled(false);
+
+        // add them to corresponding data structures
+        System.out.println(this.emptyMemory.inOrder());
+        if (bestFit.getSize() == 0) {
+            this.emptyMemory.remove(bestFit);
+        }
+        this.filledMemory.add(filledPart);
+        return filledPart.getMemAddress();
+
+    }
 
     @Override
     public boolean deallocate(int allocNum) {
-        
+
         Metric stat = new Metric();
         stat.setAlloc(false);
-        
+
         Block dealloc = null;
         for (Block b : this.filledMemory) {
             if (b.getAllocNum() == allocNum) {
@@ -213,7 +210,7 @@ public class ThresholdMemory implements Memory {
             this.metrics.add(stat);
             return false;
         }
-        //frees it
+        // frees it
         dealloc.setFilled(false);
         this.emptyMemory.add(dealloc);
         stat.setAddress(dealloc.getMemAddress());
@@ -223,109 +220,116 @@ public class ThresholdMemory implements Memory {
         stat.setSuccess(true);
         this.metrics.add(stat);
         return true;
-       
+
     }
 
     @Override
     public void defrag() {
-        this.numDefrag++;
-        if (this.emptyMemory.size() == 0) {
-            return;
-        }
-        //timing sorts, only use one later.
-        ArrayList<Block> sorted = this.quickSort();
-        ArrayList<Block> bucketSort = this.bucketSort();
-        bucketSort.clear();
-        
-        //fix address calc.
-        for (int i = 0; i < sorted.size();) {
-            Block b = sorted.get(i);
-            int diff = -1;
-            if (i + 1 < sorted.size()) {
-                diff = b.getMemAddress() + b.getSize() 
-                    - sorted.get(i + 1).getMemAddress();
-            }
-            if (diff == 0) {
-                Block tmp = sorted.remove(i + 1);
-                Block good = sorted.get(i);
-                int newSize = tmp.getSize() + good.getSize();
-                int address = good.getMemAddress();
-                Block putIn = new Block(-1, address, newSize);
-                sorted.set(i, putIn);
-                i--;
-            }
-            i++;
-        }
+        // this.numDefrag++;
+        if (this.emptyMemory.size() != 0) {
 
-        this.emptyMemory = new AVLtree<Block>(sorted);
-        
+            // timing sorts, only use one later.
+            ArrayList<Block> sorted = this.quickSort();
+            ArrayList<Block> bucketSort = this.bucketSort();
+            bucketSort.clear();
+
+            // fix address calc.
+            for (int i = 0; i < sorted.size();) {
+                Block b = sorted.get(i);
+                int diff = -1;
+                if (i + 1 < sorted.size()) {
+                    diff = b.getMemAddress() + b.getSize() - sorted.get(i + 1).getMemAddress();
+                }
+                if (diff == 0) {
+                    Block tmp = sorted.remove(i + 1);
+                    Block good = sorted.get(i);
+                    int newSize = tmp.getSize() + good.getSize();
+                    int address = good.getMemAddress();
+                    Block putIn = new Block(-1, address, newSize);
+                    sorted.set(i, putIn);
+                    i--;
+                }
+                i++;
+            }
+
+            this.emptyMemory = new AVLtree<Block>(sorted);
+        }
     }
 
     @Override
     public ArrayList<Block> bucketSort() {
-        
+
         final long startTime = System.currentTimeMillis();
-        
+
         ArrayList<Block> sortedMemory = new ArrayList<Block>();
-        
+
         Block[] memoryAddress = new Block[this.size];
 
         for (Block b : this.emptyMemory.inOrder()) {
             memoryAddress[b.getMemAddress()] = b;
         }
-        
+
         for (int i = 0; i < memoryAddress.length; i++) {
             if (memoryAddress[i] != null) {
                 sortedMemory.add(memoryAddress[i]);
             }
         }
-        
+
         final long endTime = System.currentTimeMillis();
         this.totalSizeBucketsort += this.emptyMemory.size();
         this.timeBucketSort += endTime - startTime;
-        
+
         return sortedMemory;
     }
 
     @Override
     public ArrayList<Block> quickSort() {
         final long startTime = System.currentTimeMillis();
-        
-        //avoids refrence to tree and thus sorting actual tree.
+
+        // avoids refrence to tree and thus sorting actual tree.
         ArrayList<Block> tmp = new ArrayList<Block>();
-        
+
         for (Block b : this.emptyMemory.inOrder()) {
             tmp.add(b);
         }
-        
+
         this.qsort(tmp, 0, tmp.size() - 1);
-        
+
         final long endTime = System.currentTimeMillis();
         this.totalSizeQuickSort += this.emptyMemory.size();
         this.timeQuickSort += endTime - startTime;
-        
+
         return tmp;
     }
-    
+
     /**
      * Private helper method for quicksort.
-     * @param tmp ArrayList to sort
-     * @param lo lower bound
-     * @param hi upper bound
+     * 
+     * @param tmp
+     *            ArrayList to sort
+     * @param lo
+     *            lower bound
+     * @param hi
+     *            upper bound
      */
     private void qsort(ArrayList<Block> tmp, int lo, int hi) {
         if (hi <= lo) {
             return;
         }
-        int j = this.partition(tmp, lo, hi); //partition it
-        this.qsort(tmp, lo, j - 1); //sort left part
-        this.qsort(tmp, j + 1, hi); //sort right part
+        int j = this.partition(tmp, lo, hi); // partition it
+        this.qsort(tmp, lo, j - 1); // sort left part
+        this.qsort(tmp, j + 1, hi); // sort right part
     }
+
     /**
      * Partitions the array to sort.
-     * @param tmp arraylist to sort
-     * @param lo lower bound
-     * @param hi upper bound
+     * 
+     * @param tmp
+     *            arraylist to sort
+     * @param lo
+     *            lower bound
+     * @param hi
+     *            upper bound
      * @return j
      */
     private int partition(ArrayList<Block> tmp, int lo, int hi) {
@@ -346,28 +350,33 @@ public class ThresholdMemory implements Memory {
             if (i >= j) {
                 break;
             }
-            this.swap(tmp, i, j);   
+            this.swap(tmp, i, j);
         }
         this.swap(tmp, lo, j);
         return j;
     }
-    
+
     /**
      * Swaps the element at i with j in tmp.
-     * @param tmp array list
-     * @param i first index
-     * @param j second index
+     * 
+     * @param tmp
+     *            array list
+     * @param i
+     *            first index
+     * @param j
+     *            second index
      */
     private void swap(ArrayList<Block> tmp, int i, int j) {
         Block block = tmp.get(i);
         tmp.set(i, tmp.get(j));
         tmp.set(j, block);
     }
-    
+
     /*----ANALYSIS METHODS----*/
-    
+
     /**
      * Average time/size bucketsort.
+     * 
      * @return avg time BS.
      */
     public double getBSTime() {
@@ -376,9 +385,10 @@ public class ThresholdMemory implements Memory {
         }
         return this.timeBucketSort / this.totalSizeBucketsort;
     }
-    
+
     /**
      * Average time/size quicksort.
+     * 
      * @return avg time QS.
      */
     public double getQSTime() {
@@ -387,9 +397,10 @@ public class ThresholdMemory implements Memory {
         }
         return this.timeQuickSort / this.totalSizeQuickSort;
     }
-    
+
     /**
      * Average time to process alloc.
+     * 
      * @return Average time.
      */
     public double getAvgTime() {
@@ -398,46 +409,50 @@ public class ThresholdMemory implements Memory {
         }
         return this.allocTime / this.numAllocs;
     }
-    
+
     /**
      * Size of failed allocation attempts.
+     * 
      * @return sizeFailedAllocs.
      */
     public int getFailedSize() {
         return this.sizeFailedAllocs;
     }
-    
-    
+
     /**
      * Number of failed allocation attempts.
+     * 
      * @return numFailedAllocs.
      */
     public int getFailedAllocs() {
         return this.numFailedAllocs;
     }
-    
+
     /**
      * Returns the Number of Defragmentations.
+     * 
      * @return defrag
      */
     public int getDefrag() {
         return this.numDefrag;
     }
-    
+
     /**
      * Returns filled memory.
+     * 
      * @return AL of filled mem.
      */
     public ArrayList<Block> getFilledMem() {
         return this.filledMemory;
     }
-    
+
     /**
      * Gets the metrics so far.
+     * 
      * @return ArrayList of metrics to be printed.
      */
     public ArrayList<Metric> getMetrics() {
         return this.metrics;
     }
-    
+
 }
