@@ -333,16 +333,17 @@ public class BestFitMemory implements Memory {
     }
     
     /*----ANALYSIS METHODS----*/
-    
+
     /**
      * Average time/size bucketsort.
+     * 
      * @return avg time BS.
      */
-    public double getBSTime() {
+    public float getBSTime() {
         if (this.totalSizeBucketsort == 0) {
             return -1;
         }
-        return  ((double) this.timeBucketsort / this.totalSizeBucketsort)/ 1000;
+        return  ((float)this.timeBucketsort / this.totalSizeBucketsort)/ 1000;
     }
 
     /**
@@ -350,11 +351,11 @@ public class BestFitMemory implements Memory {
      * 
      * @return avg time QS.
      */
-    public double getQSTime() {
+    public float getQSTime() {
         if (this.totalSizeQuickSort == 0) {
             return -1;
         }
-        return ((double) this.timeQuickSort / this.totalSizeQuickSort) / 1000;
+        return ((float) this.timeQuickSort / this.totalSizeQuickSort) / 1000;
     }
 
     /**
@@ -362,52 +363,55 @@ public class BestFitMemory implements Memory {
      * 
      * @return Average time.
      */
-    public double getAvgTime() {
+    public float getAvgTime() {
         if (this.numAllocs == 0) {
             return -1;
         }
-        return (((double) this.allocTime) / this.numAllocs) / 1000;
+        return (((float) this.allocTime) / this.numAllocs) / 1000;
     }
-    
+
     /**
      * Size of failed allocation attempts.
+     * 
      * @return sizeFailedAllocs.
      */
-    public double getFailedSize() {
-        return (double) this.sizeFailedAllocs / this.numFailedAllocs;
+    public long getFailedSize() {
+        return (long) this.sizeFailedAllocs / this.numFailedAllocs;
     }
-    
-    
+
     /**
      * Number of failed allocation attempts.
+     * 
      * @return numFailedAllocs.
      */
     public int getFailedAllocs() {
         return this.numFailedAllocs;
     }
-    
+
     /**
      * Returns the Number of Defragmentations.
+     * 
      * @return defrag
      */
     public int getDefrag() {
         return this.numDefrag;
     }
-    
+
     /**
      * Returns filled memory.
+     * 
      * @return AL of filled mem.
      */
     public ArrayList<Block> getFilledMem() {
         return this.filledMemory;
     }
-    
+
     /**
      * Gets the metrics so far.
+     * 
      * @return ArrayList of metrics to be printed.
      */
     public ArrayList<Metric> getMetrics() {
         return this.metrics;
     }
-    
 }

@@ -391,11 +391,11 @@ public class WorstFitMemory implements Memory {
      * Size of failed allocation attempts.
      * @return sizeFailedAllocs.
      */
-    public double getFailedSize() {
+    public long getFailedSize() {
         if (this.numFailedAllocs == 0) {
             return -1;
         }
-        return ((double) this.sizeFailedAllocs) / this.numFailedAllocs;
+        return ((long) this.sizeFailedAllocs) / this.numFailedAllocs;
     }
     
     
