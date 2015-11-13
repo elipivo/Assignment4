@@ -93,7 +93,7 @@ public class ThresholdMemory implements Memory {
 
     @Override
     public int allocate(int aSize, int allocNum) {
-        final long startTime = System.currentTimeMillis();
+        final long startTime = System.nanoTime();
 
         Metric metric = new Metric();
         metric.setAlloc(true);
@@ -135,13 +135,14 @@ public class ThresholdMemory implements Memory {
                 metric.setSuccess(false);
                 metric.setDefrag(true);
                 metric.setAddress(-1);
-
+                this.numFailedAllocs++;
+                this.sizeFailedAllocs += aSize;
             }
 
         }
 
         this.metrics.add(metric);
-        final long endTime = System.currentTimeMillis();
+        final long endTime = System.nanoTime();
         this.allocTime += endTime - startTime;
         return metric.getAddress();
     }
@@ -225,7 +226,7 @@ public class ThresholdMemory implements Memory {
 
     @Override
     public void defrag() {
-        // this.numDefrag++;
+        this.numDefrag++;
         if (this.emptyMemory.size() != 0) {
 
             // timing sorts, only use one later.
@@ -259,7 +260,7 @@ public class ThresholdMemory implements Memory {
     @Override
     public ArrayList<Block> bucketSort() {
 
-        final long startTime = System.currentTimeMillis();
+        final long startTime = System.nanoTime();
 
         ArrayList<Block> sortedMemory = new ArrayList<Block>();
 
@@ -275,7 +276,7 @@ public class ThresholdMemory implements Memory {
             }
         }
 
-        final long endTime = System.currentTimeMillis();
+        final long endTime = System.nanoTime();
         this.totalSizeBucketsort += this.emptyMemory.size();
         this.timeBucketSort += endTime - startTime;
 
@@ -284,7 +285,7 @@ public class ThresholdMemory implements Memory {
 
     @Override
     public ArrayList<Block> quickSort() {
-        final long startTime = System.currentTimeMillis();
+        final long startTime = System.nanoTime();
 
         // avoids refrence to tree and thus sorting actual tree.
         ArrayList<Block> tmp = new ArrayList<Block>();
@@ -295,7 +296,7 @@ public class ThresholdMemory implements Memory {
 
         this.qsort(tmp, 0, tmp.size() - 1);
 
-        final long endTime = System.currentTimeMillis();
+        final long endTime = System.nanoTime();
         this.totalSizeQuickSort += this.emptyMemory.size();
         this.timeQuickSort += endTime - startTime;
 
@@ -383,7 +384,7 @@ public class ThresholdMemory implements Memory {
         if (this.totalSizeBucketsort == 0) {
             return -1;
         }
-        return this.timeBucketSort / this.totalSizeBucketsort;
+        return  (double) this.timeBucketSort / this.totalSizeBucketsort;
     }
 
     /**
@@ -395,7 +396,7 @@ public class ThresholdMemory implements Memory {
         if (this.totalSizeQuickSort == 0) {
             return -1;
         }
-        return this.timeQuickSort / this.totalSizeQuickSort;
+        return (double) this.timeQuickSort / this.totalSizeQuickSort;
     }
 
     /**
@@ -407,7 +408,7 @@ public class ThresholdMemory implements Memory {
         if (this.numAllocs == 0) {
             return -1;
         }
-        return this.allocTime / this.numAllocs;
+        return  (double) this.allocTime / this.numAllocs;
     }
 
     /**
@@ -415,8 +416,8 @@ public class ThresholdMemory implements Memory {
      * 
      * @return sizeFailedAllocs.
      */
-    public int getFailedSize() {
-        return this.sizeFailedAllocs;
+    public double getFailedSize() {
+        return (double) this.sizeFailedAllocs / this.numFailedAllocs;
     }
 
     /**

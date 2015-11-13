@@ -30,7 +30,7 @@ public class WorstFitMemory implements Memory {
     /** Num of alloc occurred so far. */
     private int numAllocs;
     /** Cumulative amt of time for QS. */
-    private long timeQucksort;
+    private long timeQuicksort;
     /** Cumulative size of QS. */
     private long totalSizeQuicksort;
     /** Cumulative time taken by BS. */
@@ -58,7 +58,7 @@ public class WorstFitMemory implements Memory {
         this.allocTime = 0;
         this.sizeFailedAllocs = 0;
         this.timeBucketsort = 0;
-        this.timeQucksort = 0;
+        this.timeQuicksort = 0;
         this.totalSizeBucketsort = 0;
         this.totalSizeQuicksort = 0;
     }
@@ -67,7 +67,7 @@ public class WorstFitMemory implements Memory {
     
     @Override
     public int allocate(int size, int allocNumTmp) {
-        final long startTime = System.currentTimeMillis();
+        final long startTime = System.nanoTime();
         
         Metric stat = new Metric();
         stat.setAlloc(true);
@@ -83,7 +83,7 @@ public class WorstFitMemory implements Memory {
             stat.setId(allocNumTmp);
             stat.setSizeReq(size);
             this.metrics.add(stat);
-            final long endTime = System.currentTimeMillis();
+            final long endTime = System.nanoTime();
             this.allocTime += endTime - startTime;
             return -1;
         }
@@ -97,7 +97,7 @@ public class WorstFitMemory implements Memory {
             stat.setId(allocNumTmp);
             stat.setSizeReq(size);
             this.metrics.add(stat);
-            final long endTime = System.currentTimeMillis();
+            final long endTime = System.nanoTime();
             this.allocTime += endTime - startTime;
             return -1;
         }
@@ -116,7 +116,7 @@ public class WorstFitMemory implements Memory {
             stat.setId(allocNumTmp);
             stat.setSizeReq(size);
             this.metrics.add(stat);
-            final long endTime = System.currentTimeMillis();
+            final long endTime = System.nanoTime();
             this.allocTime += endTime - startTime;
             return num;
         }
@@ -141,7 +141,7 @@ public class WorstFitMemory implements Memory {
         stat.setSizeReq(size);
         this.metrics.add(stat);
         
-        final long endTime = System.currentTimeMillis();
+        final long endTime = System.nanoTime();
         this.allocTime += endTime - startTime;
         
         return alloc.getMemAddress();
@@ -252,7 +252,7 @@ public class WorstFitMemory implements Memory {
     
     @Override
     public ArrayList<Block> bucketSort() {
-        final long startTime = System.currentTimeMillis();
+        final long startTime = System.nanoTime();
         
         ArrayList<Block> sortedMemory = new ArrayList<Block>();
         
@@ -268,7 +268,7 @@ public class WorstFitMemory implements Memory {
             }
         }
         
-        final long endTime = System.currentTimeMillis();
+        final long endTime = System.nanoTime();
         this.totalSizeBucketsort += this.emptyMemory.size();
         this.timeBucketsort += endTime - startTime;
         
@@ -277,7 +277,7 @@ public class WorstFitMemory implements Memory {
 
     @Override
     public ArrayList<Block> quickSort() {
-        final long startTime = System.currentTimeMillis();
+        final long startTime = System.nanoTime();
         
         //avoids refrence to heap and thus sorting actual heap.
         ArrayList<Block> tmp = new 
@@ -286,9 +286,9 @@ public class WorstFitMemory implements Memory {
         this.qsort(tmp, 0, tmp.size() - 1);
 
         
-        final long endTime = System.currentTimeMillis();
-        this.totalSizeBucketsort += this.emptyMemory.size();
-        this.timeBucketsort += endTime - startTime;
+        final long endTime = System.nanoTime();
+        this.totalSizeQuicksort += this.emptyMemory.size();
+        this.timeQuicksort += endTime - startTime;
         
         return tmp;
     }
@@ -373,7 +373,7 @@ public class WorstFitMemory implements Memory {
         if (this.totalSizeQuicksort == 0) {
             return -1;
         }
-        return ((double) this.timeQucksort) / this.totalSizeQuicksort;
+        return ((double) this.timeQuicksort) / this.totalSizeQuicksort;
     }
     
     /**

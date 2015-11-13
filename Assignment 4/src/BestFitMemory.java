@@ -59,83 +59,86 @@ public class BestFitMemory implements Memory {
         this.timeBucketsort = 0;
         this.totalSizeBucketsort = 0;
     }
-    
     @Override
-    public int allocate(int size, int allocNum) {
-        
+    public int allocate(int aSize, int allocNum) {
         final long startTime = System.currentTimeMillis();
-       
+
         Metric metric = new Metric();
         metric.setAlloc(true);
         metric.setId(allocNum);
-        metric.setSizeReq(size);
+        metric.setSizeReq(aSize);
         this.numAllocs++;
-        
-        //get as small a block as possible
-        Block bestFit = this.emptyMemory.ceiling(new Block(-1, -1, size));
-        
+
+        // get as small a block as possible
+        Block bestFit = this.emptyMemory.ceiling(new Block(-1, -1, aSize));
+
         if (bestFit != null) {
-            //cut block into filled part and empty part   
-            Block filledPart = 
-                    new Block(allocNum, bestFit.getMemAddress(), size);
-            filledPart.setFilled(true);
-            Block emptyPart = 
-                    new Block(-1, bestFit.getMemAddress() + size,
-                            bestFit.getSize() - size);
-            filledPart.setFilled(false);
-            
-            //add them to corresponding data structures
-            this.emptyMemory.add(emptyPart);
-            this.filledMemory.add(filledPart);
-            
-            //update metrics
+            // cut block into filled part and empty part
+            // update metrics
+            int add = this.alloc(bestFit, aSize, allocNum);
             metric.setSuccess(true);
             metric.setDefrag(false);
-            metric.setAddress(filledPart.getMemAddress());
-            
+            metric.setAddress(add);
+
         } else {
-            //didn't work, defrag and try again
-            
+            // didn't work, defrag and try again
+            System.out.println("Defrag! " + aSize);
             this.defrag();
-            
-            //try again
-            bestFit = this.emptyMemory.ceiling(new Block(-1, -1, size));
+
+            // try again
+            bestFit = this.emptyMemory.ceiling(new Block(-1, -1, aSize));
 
             if (bestFit != null) {
-                //cut block into filled part and empty part   
-                Block filledPart = 
-                        new Block(allocNum, bestFit.getMemAddress(), size);
-                filledPart.setFilled(true);
-                Block emptyPart = 
-                        new Block(-1, bestFit.getMemAddress() + size,
-                                bestFit.getSize() - size);
-                filledPart.setFilled(false);
-                
-                //add them to corresponding data structures
-                this.emptyMemory.add(emptyPart);
-                this.filledMemory.add(filledPart);
-                
-                //update metrics
+                int add = this.alloc(bestFit, aSize, allocNum);
+
+                // update metrics
                 metric.setSuccess(true);
                 metric.setDefrag(true);
-                metric.setAddress(filledPart.getMemAddress());
-                
+                metric.setAddress(add);
+
             } else {
-                //alloc failed
-                
-                //update metrics
+                // alloc failed
+
+                // update metrics
                 metric.setSuccess(false);
                 metric.setDefrag(true);
                 metric.setAddress(-1);
-                
+
             }
-            
+
         }
-          
+
         this.metrics.add(metric);
         final long endTime = System.currentTimeMillis();
         this.allocTime += endTime - startTime;
         return metric.getAddress();
+    }
+    /**
+     * Helper method so that allocate didn't do things twice.
+     * @param bestFit
+     * Best fit block
+     * @param aSize
+     * Allocation size
+     * @param allocNum
+     * Allocation number
+     * @return
+     * Memory address
+     */
+    private int alloc(Block bestFit, int aSize, int allocNum) {
+        Block filledPart = new Block(allocNum, bestFit.getMemAddress(), aSize);
+        filledPart.setFilled(true);
+        bestFit.setSize(bestFit.getSize() - aSize);
+        bestFit.setMemAddress(bestFit.getMemAddress() + aSize);
+        filledPart.setFilled(false);
+
+        // add them to corresponding data structures
+        System.out.println(this.emptyMemory.inOrder());
+        if (bestFit.getSize() == 0) {
+            this.emptyMemory.remove(bestFit);
+        }
+        this.filledMemory.add(filledPart);
+        return filledPart.getMemAddress();
+
     }
 
     @Override
