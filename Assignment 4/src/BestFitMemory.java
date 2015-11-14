@@ -80,7 +80,7 @@ public class BestFitMemory implements Memory {
         this.numAllocs++;
 
         //ensure the allocation attempt is smaller than our memory size
-        if (aSize > this.memSize || aSize == 0) {
+        if (aSize > this.memSize || aSize <= 0) {
             
             // update metrics
             metric.setSuccess(false);

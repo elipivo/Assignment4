@@ -232,7 +232,24 @@ public class ThresholdMemory implements Memory {
         metric.setId(allocNum);
         metric.setSizeReq(aSize);
         this.numAllocs++;
-
+        
+        //ensure the allocation attempt is smaller than our memory size
+        if (aSize > this.size || aSize <= 0) {
+            
+            // update metrics
+            metric.setSuccess(false);
+            metric.setDefrag(false);
+            metric.setAddress(-1);
+            this.numFailedAllocs++;
+            this.sizeFailedAllocs += aSize;
+            
+            this.metrics.add(metric);
+            final long endTime = System.nanoTime();
+            this.allocTime += endTime - startTime;
+            return metric.getAddress();
+            
+        }
+        
         // get as small a block as possible
         Block bestFit = this.emptyMemory.ceiling(new Block(-1, -1, aSize));
 
