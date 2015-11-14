@@ -473,7 +473,8 @@ public class AVLtree<T extends Comparable<? super T>> {
             return true;
         }
         return this.isBalanced(curr.left) && this.isBalanced(curr.right)
-                && Math.abs(this.height(curr.left) - this.height(curr.right)) < 2;
+                && Math.abs(this.height(curr.left) 
+                        - this.height(curr.right)) < 2;
     }
 
     /**
@@ -505,8 +506,10 @@ public class AVLtree<T extends Comparable<? super T>> {
             k1.right = k2;
 
             // update heights
-            k1.height = Math.max(this.height(k1.left), this.height(k1.right)) + 1;
-            k2.height = Math.max(this.height(k2.left), this.height(k2.right)) + 1;
+            k1.height = Math.max(this.height(k1.left),
+                    this.height(k1.right)) + 1;
+            k2.height = Math.max(this.height(k2.left),
+                    this.height(k2.right)) + 1;
         }
         return k1;
     }
@@ -529,8 +532,10 @@ public class AVLtree<T extends Comparable<? super T>> {
             k2.left = k1;
 
             // update heights
-            k1.height = Math.max(this.height(k1.left), this.height(k1.right)) + 1;
-            k2.height = Math.max(this.height(k2.left), this.height(k2.right)) + 1;
+            k1.height = Math.max(this.height(k1.left),
+                    this.height(k1.right)) + 1;
+            k2.height = Math.max(this.height(k2.left),
+                    this.height(k2.right)) + 1;
         }
         return k2;
     }

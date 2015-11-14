@@ -159,7 +159,8 @@ public class BestFitMemory implements Memory {
         filledPart.setFilled(true);
         filledPart.setFilled(true);
         
-        Block emptyPart = new Block(-1, bestFit.getMemAddress() + aSize, bestFit.getSize() - aSize);
+        Block emptyPart = new Block(-1, bestFit.getMemAddress()
+                + aSize, bestFit.getSize() - aSize);
         emptyPart.setFilled(false);
         
         this.emptyMemory.remove(bestFit);
