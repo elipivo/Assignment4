@@ -74,6 +74,10 @@ public class ThresholdMemory implements Memory {
      */
     private long totalSizeBucketsort;
     /**
+     * If this variable is true, we use a variable threshold.
+     */
+    private boolean variableThreshold;
+    /**
      * Constructor.
      * 
      * @param initalSize
@@ -97,6 +101,34 @@ public class ThresholdMemory implements Memory {
         this.totalSizeBucketsort = 0;
         this.totalSizeQuickSort = 0;
         this.threshold = 1;
+        this.variableThreshold = true;
+    }
+    /**
+     * Constructor.
+     * 
+     * @param initalSize
+     *            Initial size
+    *   @param initialThreshold
+    *       initial threshold
+     */
+    public ThresholdMemory(int initalSize, int initialThreshold) {
+        this.size = initalSize;
+        this.emptyMemory = new AVLtree<Block>();
+        this.setFilledMemory(new ArrayList<Block>());
+        Block initialBlock = new Block(0, 0, this.size);
+        this.emptyMemory.add(initialBlock);
+        this.metrics = new ArrayList<Metric>();
+        this.numDefrag = 0;
+        this.numFailedAllocs = 0;
+        this.sizeFailedAllocs = 0;
+        this.allocTime = 0;
+        this.numAllocs = 0;
+        this.timeBucketSort = 0;
+        this.timeQuickSort = 0;
+        this.totalSizeBucketsort = 0;
+        this.totalSizeQuickSort = 0;
+        this.threshold = initialThreshold;
+        this.variableThreshold = false;
     }
     /**
      * @return the emptyMemory
@@ -244,7 +276,9 @@ public class ThresholdMemory implements Memory {
         this.metrics.add(metric);
         final long endTime = System.nanoTime();
         this.allocTime += endTime - startTime;
-        this.threshold = this.avgSize;
+        if (this.variableThreshold) {
+            this.threshold = this.avgSize;
+        }
         return metric.getAddress();
     }
     /**
@@ -260,9 +294,12 @@ public class ThresholdMemory implements Memory {
      */
     private int alloc(Block bestFit, int aSize, int allocNum) {
         int thresh = bestFit.getSize() - aSize;
-        
+        System.out.println(thresh);
         while (thresh < this.threshold && thresh != 0) {
-            bestFit = this.emptyMemory.ceiling(bestFit);
+            System.out.println("Old best fit " + bestFit.toString());
+            bestFit = this.emptyMemory.ceiling(
+                    new Block(-1, -1, bestFit.getSize() + 1));
+            
             if (bestFit == null || bestFit.getSize() == thresh + aSize) {
                 // If it can't find something bigger than the block
                 // that causes a less than threshold split
@@ -271,8 +308,10 @@ public class ThresholdMemory implements Memory {
                 bestFit = this.emptyMemory.ceiling(new Block(-1, -1, aSize));
                 break;
             }
+            System.out.println("New best fit " + bestFit.toString());
             thresh = bestFit.getSize() - aSize;
         }
+        this.emptyMemory.remove(bestFit);
         Block filledPart = new Block(allocNum, bestFit.getMemAddress(), aSize);
         filledPart.setFilled(true);
         bestFit.setSize(bestFit.getSize() - aSize);
@@ -281,8 +320,8 @@ public class ThresholdMemory implements Memory {
 
         // add them to corresponding data structures
         
-        if (bestFit.getSize() == 0) {
-            this.emptyMemory.remove(bestFit);
+        if (bestFit.getSize() != 0) {
+            this.emptyMemory.add(bestFit);
         }
         this.getFilledMemory().add(filledPart);
         return filledPart.getMemAddress();
