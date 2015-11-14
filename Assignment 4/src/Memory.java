@@ -42,6 +42,7 @@ public interface Memory {
     
     /**
      * Implements QuickSort.
+     * Adapted from Algorithms by Sedgewick and Wayne.
      * @return sorted list of memory blocks via ArrayList.
      */
     ArrayList<Block> quickSort();
