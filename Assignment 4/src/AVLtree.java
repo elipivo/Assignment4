@@ -239,6 +239,7 @@ public class AVLtree<T extends Comparable<? super T>> {
             this.size++;
             // how you can check whether the root is balanced:
             // System.out.println(Math.abs(balanceFactor(this.root)));
+            
             return true;
         }
         return false;
@@ -270,6 +271,7 @@ public class AVLtree<T extends Comparable<? super T>> {
                 this.height(curr.right)) + 1;
 
         temp = this.balance(temp);
+       
         return temp;
     }
 

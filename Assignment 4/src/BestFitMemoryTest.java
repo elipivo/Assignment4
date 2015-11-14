@@ -297,11 +297,12 @@ public class BestFitMemoryTest {
         assertTrue(mem.getFailedAllocs() == 2);
         assertEquals(mem.getEmptyMem().size(), 3);
         assertTrue(mem.getFilledMem().size() == 5);
+        System.out.println(mem.getFilledMem());
         assertTrue(mem.getFilledMem().get(0).getSize() == 20);
-        assertTrue(mem.getFilledMem().get(1).getSize() == 50);
-        assertTrue(mem.getFilledMem().get(2).getSize() == 8);
-        assertTrue(mem.getFilledMem().get(3).getSize() == 20);
-        assertTrue(mem.getFilledMem().get(4).getSize() == 30);
+        assertTrue(mem.getFilledMem().get(1).getSize() == 20);
+        assertTrue(mem.getFilledMem().get(2).getSize() == 30);
+        assertTrue(mem.getFilledMem().get(3).getSize() == 50);
+        assertTrue(mem.getFilledMem().get(4).getSize() == 8);
         memIter = mem.getEmptyMem().inOrder().iterator();
         assertTrue(memIter.next().getSize() == 2);
         assertTrue(memIter.next().getSize() == 20);
@@ -523,7 +524,7 @@ public class BestFitMemoryTest {
         assertEquals(memIter.next().getSize(), 50);
         assertEquals(memIter.next().getSize(), 100);
         
-        //worst fit testing w/in dealloc
+        //best fit testing w/in dealloc
         mem.allocate(60, 4);
         //|60*|40|20*|50|30|
         assertEquals(mem.getEmptyMem().size(), 3);
@@ -536,15 +537,15 @@ public class BestFitMemoryTest {
         assertEquals(memIter.next().getSize(), 50);
         
         //next alloc will break apart 50 block
-        mem.allocate(40, 5);
-        //|60*|40|20*|40*|10|30|
+        mem.allocate(45, 5);
+        //|60*|40|20*|45*|5|30|
         assertEquals(mem.getEmptyMem().size(), 3);
         assertEquals(mem.getFilledMem().size(), 3);
         assertEquals(mem.getFilledMem().get(0).getSize(), 20);
         assertEquals(mem.getFilledMem().get(1).getSize(), 60);
-        assertEquals(mem.getFilledMem().get(2).getSize(), 40);
+        assertEquals(mem.getFilledMem().get(2).getSize(), 45);
         memIter = mem.getEmptyMem().inOrder().iterator();
-        assertEquals(memIter.next().getSize(), 10);
+        assertEquals(memIter.next().getSize(), 5);
         assertEquals(memIter.next().getSize(), 30);
         assertEquals(memIter.next().getSize(), 40);
         

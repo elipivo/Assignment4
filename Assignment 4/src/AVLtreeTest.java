@@ -14,6 +14,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -70,6 +71,14 @@ public class AVLtreeTest {
     
     @Test
     public void testAdd() {
+        
+        ArrayList<Block> sorted = new ArrayList<Block>();
+        sorted.add(new Block(0, 0, 20));
+        sorted.add(new Block(0, 0, 10));
+        
+        
+        
+        
         
         //temporary
         AVLtree<Block> treeBlock = new AVLtree<Block>();

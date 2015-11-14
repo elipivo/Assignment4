@@ -116,8 +116,9 @@ public class BestFitMemory implements Memory {
             bestFit = this.emptyMemory.ceiling(new Block(-1, -1, aSize));
 
             if (bestFit != null) {
+                
                 int add = this.alloc(bestFit, aSize, allocNum);
-
+                
                 // update metrics
                 metric.setSuccess(true);
                 metric.setDefrag(true);
@@ -156,16 +157,17 @@ public class BestFitMemory implements Memory {
     private int alloc(Block bestFit, int aSize, int allocNum) {
         Block filledPart = new Block(allocNum, bestFit.getMemAddress(), aSize);
         filledPart.setFilled(true);
-        bestFit.setSize(bestFit.getSize() - aSize);
-        bestFit.setMemAddress(bestFit.getMemAddress() + aSize);
-        filledPart.setFilled(false);
-
-        // add them to corresponding data structures
+        filledPart.setFilled(true);
         
-        if (bestFit.getSize() == 0) {
-            this.emptyMemory.remove(bestFit);
+        Block emptyPart = new Block(-1, bestFit.getMemAddress() + aSize, bestFit.getSize() - aSize);
+        emptyPart.setFilled(false);
+        
+        this.emptyMemory.remove(bestFit);
+        if (emptyPart.getSize() != 0) {
+            this.emptyMemory.add(emptyPart);
         }
         this.filledMemory.add(filledPart);
+        
         return filledPart.getMemAddress();
 
     }
@@ -226,6 +228,7 @@ public class BestFitMemory implements Memory {
                     - sorted.get(i + 1).getMemAddress();
             }
             if (diff == 0) {
+                
                 Block tmp = sorted.remove(i + 1);
                 Block good = sorted.get(i);
                 int newSize = tmp.getSize() + good.getSize();
@@ -429,7 +432,7 @@ public class BestFitMemory implements Memory {
     /**
      * Returns empty memory.
      * 
-     * @return AL of filled mem.
+     * @return AVL of empty mem.
      */
     public AVLtree<Block> getEmptyMem() {
         return this.emptyMemory;
