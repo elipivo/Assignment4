@@ -88,7 +88,7 @@ public class WorstFitMemory implements Memory {
             return -1;
         }
         
-        if (size > this.memSize) {
+        if (size > this.memSize || size <= 0) {
             this.numFailedAllocs++;
             this.sizeFailedAllocs += size;
             stat.setSuccess(false);
